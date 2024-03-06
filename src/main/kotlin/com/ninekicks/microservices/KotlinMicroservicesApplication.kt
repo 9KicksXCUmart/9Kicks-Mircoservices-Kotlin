@@ -1,11 +1,11 @@
-package com.ninekicks.miroservices
+package com.ninekicks.microservices
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class KotlinMiroservicesApplication
+class KotlinMicroservicesApplication
 
 fun main(args: Array<String>) {
-    runApplication<KotlinMiroservicesApplication>(*args)
+    runApplication<KotlinMicroservicesApplication>(*args)
 }
