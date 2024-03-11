@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping
-class DemoController(val demoController: DemoRepositoryImpl) {
+class DemoController(
+    private val demoController: DemoRepositoryImpl
+    ) {
 
     @GetMapping("/helloworld")
     fun helloWorld():String {
