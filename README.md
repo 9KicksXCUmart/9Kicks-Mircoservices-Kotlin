@@ -99,6 +99,7 @@ For any functions that retrieve more than 1 object, we use plural form
 
 ### 2.8 Kotlin Data Class
 For any model class/object, we will use Kotlin Data Class to construct
+
 Non-Nested Class
 ```kotlin
 data class Person(
@@ -118,3 +119,18 @@ data class Person(
     )
 }
 ```
+
+### 2.9 Data Transfer Object
+For any object that we receive from remote calls (backend, frontend, database),
+we create a `DTO` object for it.<br>
+**Beware: It is different from the main model class `UserDTO != User`**
+
+For example:<br>
+We want to send an `User` object from `backend` to `frontend - Account Summary`.<br>
+We define a `UserDTO`:
+```kotlin
+data class UserDTO(
+    val age: Int
+)
+```
+It encapsulate some data that `frontend - Account Summary` does not need to know, e.g. `creditCardNumber`
