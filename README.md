@@ -133,4 +133,11 @@ data class UserDTO(
     val age: Int
 )
 ```
-It encapsulate some data that `frontend - Account Summary` does not need to know, e.g. `creditCardNumber`
+It encapsulates some data that `frontend - Account Summary` does not need to know, e.g. `creditCardNumber`
+
+### 2.10 Request and Response
+For any object that is received as a **response**. We use place `response` after the object name.<br>
+e.g. `UserResponse`
+
+For any object that is being sent as a **request**. We use place `request` after the object name.<br>
+e.g. `UserRequest`
