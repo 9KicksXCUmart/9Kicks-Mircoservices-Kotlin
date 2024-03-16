@@ -1,8 +1,8 @@
-package com.ninekicks.microservices.repository.impl
+package com.ninekicks.microservices.demo
 
 import aws.sdk.kotlin.services.dynamodb.model.ListTablesRequest
 import com.ninekicks.microservices.config.DynamoDBConfig
-import com.ninekicks.microservices.repository.DemoRepository
+import com.ninekicks.microservices.demo.DemoRepository
 import org.springframework.stereotype.Repository
 
 @Repository
