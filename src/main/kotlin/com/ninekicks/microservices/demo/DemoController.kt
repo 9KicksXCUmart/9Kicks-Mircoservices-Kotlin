@@ -1,6 +1,5 @@
-package com.ninekicks.microservices.controller
+package com.ninekicks.microservices.demo
 
-import com.ninekicks.microservices.repository.impl.DemoRepositoryImpl
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -8,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping
 class DemoController(
-    private val demoController: DemoRepositoryImpl
+    private val demoController: DemoRepositoryImpl,
     ) {
 
     @GetMapping("/helloworld")
@@ -25,7 +24,6 @@ class DemoController(
             listOf("Error")
         }
     }
-
 }
 
 

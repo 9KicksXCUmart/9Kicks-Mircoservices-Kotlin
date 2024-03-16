@@ -2,3 +2,6 @@ cloud.aws.credentials:
   accessKey: ${AWS_ACCESS_KEY_ID}
   secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
 
+dynamodb:
+  tableName: ${AWS_DYNAMODB_TABLE_NAME}
+
