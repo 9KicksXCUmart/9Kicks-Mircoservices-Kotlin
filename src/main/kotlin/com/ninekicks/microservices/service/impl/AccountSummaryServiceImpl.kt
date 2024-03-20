@@ -15,14 +15,11 @@ class AccountSummaryServiceImpl(
         val responseHandler = ResponseHandler()
         return runBlocking {
             val user = userRepository.getUser(userId)
-            try{
-                if(user == null)
-                    responseHandler.generateResponse("User not found", false, null)
-                else
-                    responseHandler.generateResponse("Success", true, user)
-            } catch (e: Exception) {
-                responseHandler.generateResponse(e.message, false, null)
-            }
+            responseHandler.validateResponse(
+                failMessage = "User not found",
+                matchingObject = user,
+                failObject = null
+            )
         }
     }
 }
