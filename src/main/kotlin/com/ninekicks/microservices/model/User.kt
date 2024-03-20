@@ -22,7 +22,7 @@ data class User(
     @DynamoDBTypeConverted(converter = ShippingAddressConverter::class)
     var shippingAddress:ShippingAddress,
     @DynamoDBAttribute(attributeName = "isVerified")
-    private var isVerified:Boolean,
+    var isVerified:Boolean,
     @DynamoDBAttribute(attributeName = "creditCardDetails")
     @DynamoDBTypeConverted(converter = CreditCardConverter::class)
     private var creditCardDetails:CreditCardDetails = CreditCardDetails()
