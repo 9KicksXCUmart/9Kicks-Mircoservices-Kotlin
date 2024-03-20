@@ -1,7 +1,7 @@
 package com.ninekicks.microservices.service
 
-import com.ninekicks.microservices.model.User
+import org.springframework.http.ResponseEntity
 
 interface AccountSummaryService{
-    fun displayUserProfile(userId:String): User?
+    fun displayUserProfile(userId:String): ResponseEntity<Any>
 }
