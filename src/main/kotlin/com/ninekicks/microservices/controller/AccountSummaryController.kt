@@ -13,4 +13,19 @@ class AccountSummaryController (
     fun displayUserProfile(@PathVariable userId:String): ResponseEntity<Any> {
         return accountSummaryService.displayUserProfile(userId)
     }
+
+    @PutMapping("/{userId}")
+    fun updateUserProfile(@PathVariable userId:String): ResponseEntity<Any> {
+        TODO()
+    }
+
+    @GetMapping("/order-history")
+    fun displayOrderHistory(): ResponseEntity<Any> {
+        TODO()
+    }
+
+    @GetMapping("/order-details")
+    fun displayOrderDetails(): ResponseEntity<Any> {
+        TODO()
+    }
 }

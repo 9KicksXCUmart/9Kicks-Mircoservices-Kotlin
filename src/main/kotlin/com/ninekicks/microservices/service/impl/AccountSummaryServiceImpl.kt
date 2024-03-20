@@ -5,9 +5,9 @@ import com.ninekicks.microservices.repository.impl.UserRepositoryImpl
 import com.ninekicks.microservices.service.AccountSummaryService
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Service
 
-@Repository
+@Service
 class AccountSummaryServiceImpl(
     private val userRepository: UserRepositoryImpl
 ): AccountSummaryService {
