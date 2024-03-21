@@ -1,4 +1,4 @@
-package com.ninekicks.microservices.helper
+package com.ninekicks.microservices.helper.converter
 
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 

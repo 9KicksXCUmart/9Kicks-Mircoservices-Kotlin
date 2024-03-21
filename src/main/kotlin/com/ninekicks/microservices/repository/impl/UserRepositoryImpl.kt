@@ -2,8 +2,8 @@ package com.ninekicks.microservices.repository.impl
 
 import aws.sdk.kotlin.services.dynamodb.model.*
 import com.ninekicks.microservices.config.DynamoDBConfig
-import com.ninekicks.microservices.helper.CreditCardConverter
-import com.ninekicks.microservices.helper.ShippingAddressConverter
+import com.ninekicks.microservices.helper.converter.CreditCardConverter
+import com.ninekicks.microservices.helper.converter.ShippingAddressConverter
 import com.ninekicks.microservices.model.User
 import com.ninekicks.microservices.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value

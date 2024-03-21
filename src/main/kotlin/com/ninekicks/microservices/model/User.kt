@@ -1,8 +1,8 @@
 package com.ninekicks.microservices.model
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*
-import com.ninekicks.microservices.helper.CreditCardConverter
-import com.ninekicks.microservices.helper.ShippingAddressConverter
+import com.ninekicks.microservices.helper.converter.CreditCardConverter
+import com.ninekicks.microservices.helper.converter.ShippingAddressConverter
 
 @DynamoDBTable(tableName = "9Kicks")
 data class User(

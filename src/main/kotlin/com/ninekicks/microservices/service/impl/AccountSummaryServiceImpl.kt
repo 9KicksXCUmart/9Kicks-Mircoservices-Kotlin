@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service
 class AccountSummaryServiceImpl(
     private val userRepository: UserRepositoryImpl
 ): AccountSummaryService {
+    private val responseHandler = ResponseHandler()
     override fun displayUserProfile(userId:String): ResponseEntity<Any> {
-        val responseHandler = ResponseHandler()
         return runBlocking {
             val user = userRepository.getUser(userId)
             responseHandler.validateResponse(
                 failMessage = "User not found",
                 matchingObject = user,
-                failObject = null
+                failReturnObject = null
             )
         }
     }
