@@ -5,3 +5,7 @@ cloud.aws.credentials:
 dynamodb:
   tableName: ${AWS_DYNAMODB_TABLE_NAME}
 
+api:
+  stripe:
+    key: ${STRIPE_KEY}
+
