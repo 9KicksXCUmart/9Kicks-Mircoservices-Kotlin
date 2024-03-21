@@ -21,9 +21,9 @@ class UserRepositoryImpl(
     private val creditCardConverter = CreditCardConverter()
     private val shippingAddressConverter = ShippingAddressConverter()
 
-    val keyToGet = mutableMapOf<String, AttributeValue>(
-        "SK" to AttributeValue.S("USER_PROFILE"),
-        "PK" to AttributeValue.S("USER#")
+    private val keyToGet = mutableMapOf<String, AttributeValue>(
+        "PK" to AttributeValue.S("USER#"),
+        "SK" to AttributeValue.S("USER_PROFILE")
     )
     override suspend fun getUser(userId: String) : User? {
         keyToGet["PK"] = AttributeValue.S("USER#$userId")
