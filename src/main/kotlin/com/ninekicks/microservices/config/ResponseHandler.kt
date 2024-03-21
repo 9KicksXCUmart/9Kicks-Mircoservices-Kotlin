@@ -17,15 +17,15 @@ class ResponseHandler {
         successMessage: String = "Success",
         failMessage: String = "",
         matchingObject: Any?,
-        failObject: Any? = null
+        failReturnObject: Any? = null
     ): ResponseEntity<Any> {
         return try{
             if(matchingObject == null)
-                generateResponse(failMessage, false, failObject)
+                generateResponse(failMessage, false, failReturnObject)
             else
                 generateResponse(successMessage, true, matchingObject)
         } catch (e: Exception) {
-            generateResponse(e.message, false, failObject)
+            generateResponse(e.message, false, failReturnObject)
         }
     }
 }
