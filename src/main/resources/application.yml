@@ -9,3 +9,5 @@ api:
   stripe:
     key: ${STRIPE_KEY}
 
+cors:
+  originPatterns: ${CORS_ORIGINS}

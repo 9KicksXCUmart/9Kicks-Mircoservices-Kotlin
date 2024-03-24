@@ -44,36 +44,7 @@ class PaymentServiceImpl(
         }
      }
 
-    override fun createCardToken(cardToken: CardToken): ResponseEntity<Any> {
-        var tokenResult: MutableMap<String, Any> = HashMap()
-        try {
-            var card:MutableMap<String, Any> = HashMap()
-            card.put("number",cardToken.cardNumber)
-            card.put("exp_month",cardToken.expMonth)
-            card.put("exp_year",cardToken.expYear)
-            card.put("cvc",cardToken.cvc)
-            var params :MutableMap<String, Any> = HashMap()
-            params.put("card", card);
-            val token:Token = Token.create(params)
-            if (token.id != null) {
-                tokenResult.put("CardToken",token.id)
-                tokenResult.put("success",true)
-            }
-        }catch (e:Exception) {
-            println(e)
-        }finally {
-            return responseHandler.validateResponse(
-                failMessage = "Fail to create paymentIntent",
-                matchingObject = tokenResult,
-                failObject = null
-            )
-        }
 
-    }
-
-//    override fun charge(): ResponseEntity<Any> {
-//
-//    }
 
 
 }

@@ -5,6 +5,4 @@ import org.springframework.http.ResponseEntity
 
 interface PaymentService {
     fun createPaymentIntent(): ResponseEntity<Any>
-    fun createCardToken(cardToken: CardToken): ResponseEntity<Any>
-//    fun charge(): ResponseEntity<Any>
 }

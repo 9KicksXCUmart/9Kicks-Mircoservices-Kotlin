@@ -15,8 +15,4 @@ class PaymentController(
         return paymentService.createPaymentIntent()
     }
 
-    @PostMapping("/createCardToken")
-    fun createCardToken(@RequestBody payload:CardToken): ResponseEntity<Any>{
-        return paymentService.createCardToken(payload)
-    }
 }
