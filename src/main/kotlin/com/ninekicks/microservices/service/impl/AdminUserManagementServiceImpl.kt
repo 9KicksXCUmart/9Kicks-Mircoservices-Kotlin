@@ -13,19 +13,20 @@ import org.springframework.stereotype.Service
 class AdminUserManagementServiceImpl(
     private val userRepository: UserRepositoryImpl
 ): AdminUserManagementService {
+    private val responseHandler = ResponseHandler()
 
     override suspend fun findAllUsers(
         pageSize: Int,
         lastKey: Map<String, AttributeValue>?
     ): ResponseEntity<Any> {
-        val responseHandler = ResponseHandler()
+
         return runBlocking {
             val userList = userRepository.getAllUsers(pageSize, null)
 
             responseHandler.validateResponse(
                 failMessage = "User not found",
                 matchingObject = userList,
-                failObject = listOf<User>()
+                failReturnObject = listOf<User>()
             )
         }
     }

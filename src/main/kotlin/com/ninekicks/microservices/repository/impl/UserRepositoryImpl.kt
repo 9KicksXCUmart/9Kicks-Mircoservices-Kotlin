@@ -2,8 +2,8 @@ package com.ninekicks.microservices.repository.impl
 
 import aws.sdk.kotlin.services.dynamodb.model.*
 import com.ninekicks.microservices.config.DynamoDBConfig
-import com.ninekicks.microservices.helper.CreditCardConverter
-import com.ninekicks.microservices.helper.ShippingAddressConverter
+import com.ninekicks.microservices.helper.converter.CreditCardConverter
+import com.ninekicks.microservices.helper.converter.ShippingAddressConverter
 import com.ninekicks.microservices.model.User
 import com.ninekicks.microservices.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value
@@ -21,9 +21,10 @@ class UserRepositoryImpl(
     private val creditCardConverter = CreditCardConverter()
     private val shippingAddressConverter = ShippingAddressConverter()
 
-    val keyToGet = mutableMapOf<String, AttributeValue>(
-        "SK" to AttributeValue.S("USER_PROFILE"),
-        "PK" to AttributeValue.S("USER#")
+
+    private val keyToGet = mutableMapOf<String, AttributeValue>(
+        "PK" to AttributeValue.S("USER#"),
+        "SK" to AttributeValue.S("USER_PROFILE")
     )
     override suspend fun getUser(userId: String) : User? {
         keyToGet["PK"] = AttributeValue.S("USER#$userId")

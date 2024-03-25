@@ -1,5 +1,6 @@
 package com.ninekicks.microservices.controller
 
+import com.ninekicks.microservices.repository.impl.OrderRepositoryImpl
 import com.ninekicks.microservices.service.impl.AccountSummaryServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -11,7 +12,7 @@ class AccountSummaryController (
 ) {
     @GetMapping("/{userId}")
     fun displayUserProfile(@PathVariable userId:String): ResponseEntity<Any> {
-        return accountSummaryService.displayUserProfile(userId)
+        return accountSummaryService.displayUserDetails(userId)
     }
 
     @PutMapping("/{userId}")
@@ -29,4 +30,13 @@ class AccountSummaryController (
         TODO()
     }
 
+    @GetMapping("/order-history/{userId}")
+    fun displayOrderHistory(@PathVariable userId:String): ResponseEntity<Any> {
+        return accountSummaryService.listOrdersByUserId(userId, 10, null)
+    }
+
+    @GetMapping("/order-details")
+    fun displayOrderDetails(): ResponseEntity<Any> {
+        TODO()
+    }
 }
