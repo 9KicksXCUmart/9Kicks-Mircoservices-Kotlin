@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -16,15 +17,9 @@ class ProductBrowsingController(
 ) {
     val responseHandler = ResponseHandler()
 
-    @GetMapping("/{productId}")
-    fun displayUserProfile(@PathVariable productId:String): ResponseEntity<Any> {
-        return try{
-            val result: Product = productBrowsingService.fetchProductDetail(productId)
-                    ?: return responseHandler.generateResponse("Product not found", false, null)
-            responseHandler.generateResponse("Successful", true, result)
-        }catch (e: Exception) {
-            responseHandler.generateResponse(e.message ?: "", false, null)
-        }
+    @GetMapping("")
+    fun fetchProductDetail(@RequestParam("productId") productId:String): ResponseEntity<Any> {
+        return productBrowsingService.fetchProductDetail(productId)
     }
 
 }

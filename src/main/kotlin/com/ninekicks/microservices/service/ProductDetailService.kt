@@ -1,7 +1,8 @@
 package com.ninekicks.microservices.service
 
-import com.ninekicks.microservices.model.Product
+
+import org.springframework.http.ResponseEntity
 
 interface ProductDetailService {
-    fun fetchProductDetail(productId:String): Product?
+    fun fetchProductDetail(productId:String): ResponseEntity<Any>
 }
