@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/user-management")
 class AdminUserManagementController(
-    private val userRepo: UserRepositoryImpl,
     private val adminUserManagementService: AdminUserManagementServiceImpl
 ) {
     @GetMapping("/users")
