@@ -34,9 +34,5 @@ class AccountSummaryController (
     fun displayOrderHistory(@PathVariable userId:String): ResponseEntity<Any> {
         return accountSummaryService.listOrdersByUserId(userId, 10, null)
     }
-
-    @GetMapping("/order-details")
-    fun displayOrderDetails(): ResponseEntity<Any> {
-        TODO()
-    }
+    
 }

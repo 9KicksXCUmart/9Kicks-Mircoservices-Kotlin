@@ -39,7 +39,7 @@ class PaymentServiceImpl(
             return responseHandler.validateResponse(
                 failMessage = "Fail to create paymentIntent",
                 matchingObject = mapOf("clientSecret" to paymentIntent?.clientSecret),
-                failObject = null
+                failReturnObject = null
             )
         }
      }
