@@ -17,8 +17,7 @@ Default output format: json
 In case you want to use another pair of `Access Key` and `Secret Key`.
 You can add the following environment variable in IntelliJ.
 ```
-AWS_ACCESS_KEY_ID=<YOUR-ACCESS-KEY>
-AWS_SECRET_ACCESS_KEY=<YOUR-SECRET-ACCESS-KEY>
+AWS_ACCESS_KEY_ID=<YOUR-ACCESS-KEY>;AWS_SECRET_ACCESS_KEY=<YOUR-SECRET-ACCESS-KEY>;AWS_DYNAMODB_TABLE_NAME=9Kicks
 ```
 
 ## 2. Coding Standard
