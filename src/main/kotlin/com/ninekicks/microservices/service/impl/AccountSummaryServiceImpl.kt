@@ -7,6 +7,7 @@ import com.ninekicks.microservices.model.User
 import com.ninekicks.microservices.model.dto.OrderDetailDTO
 import com.ninekicks.microservices.repository.impl.OrderRepositoryImpl
 import com.ninekicks.microservices.repository.impl.ProductRepositoryImpl
+
 import com.ninekicks.microservices.repository.impl.UserRepositoryImpl
 import com.ninekicks.microservices.service.AccountSummaryService
 import kotlinx.coroutines.runBlocking
@@ -21,6 +22,7 @@ class AccountSummaryServiceImpl(
 ): AccountSummaryService {
     private val responseHandler = ResponseHandler()
     override fun displayUserDetails(userId:String): ResponseEntity<Any> {
+
         return runBlocking {
             val user = userRepository.getUser(userId)
             responseHandler.validateResponse(

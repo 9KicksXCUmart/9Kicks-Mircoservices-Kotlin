@@ -20,6 +20,16 @@ class AccountSummaryController (
         TODO()
     }
 
+    @GetMapping("/order-history")
+    fun displayOrderHistory(): ResponseEntity<Any> {
+        TODO()
+    }
+
+    @GetMapping("/order-details")
+    fun displayOrderDetails(): ResponseEntity<Any> {
+        TODO()
+    }
+
     @GetMapping("/order-history/{userId}")
     fun displayOrderHistory(@PathVariable userId:String): ResponseEntity<Any> {
         return accountSummaryService.listOrdersByUserId(userId, 10, null)

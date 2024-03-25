@@ -19,6 +19,7 @@ class AdminUserManagementServiceImpl(
         pageSize: Int,
         lastKey: Map<String, AttributeValue>?
     ): ResponseEntity<Any> {
+
         return runBlocking {
             val userList = userRepository.getAllUsers(pageSize, null)
 
