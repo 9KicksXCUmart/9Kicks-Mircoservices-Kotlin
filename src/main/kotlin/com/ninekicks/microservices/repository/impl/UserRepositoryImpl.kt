@@ -5,6 +5,7 @@ import com.ninekicks.microservices.config.DynamoDBConfig
 import com.ninekicks.microservices.helper.converter.CreditCardConverter
 import com.ninekicks.microservices.helper.converter.ShippingAddressConverter
 import com.ninekicks.microservices.model.User
+import com.ninekicks.microservices.model.dto.UserUpdateDTO
 import com.ninekicks.microservices.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Repository
@@ -12,11 +13,11 @@ import org.springframework.stereotype.Repository
 @Repository
 class UserRepositoryImpl(
     private val dynamoDBConfig: DynamoDBConfig
-): UserRepository {
+) : UserRepository {
     private val dynamoDbClient by lazy { dynamoDBConfig.dynamoDbClient() }
 
     @Value("\${dynamodb.tableName}")
-    private val dynamoDbtableName:String? = null
+    private val dynamoDbtableName: String? = null
 
     private val creditCardConverter = CreditCardConverter()
     private val shippingAddressConverter = ShippingAddressConverter()
@@ -26,7 +27,8 @@ class UserRepositoryImpl(
         "PK" to AttributeValue.S("USER#"),
         "SK" to AttributeValue.S("USER_PROFILE")
     )
-    override suspend fun getUser(userId: String) : User? {
+
+    override suspend fun getUser(userId: String): User? {
         keyToGet["PK"] = AttributeValue.S("USER#$userId")
 
         val itemRequest = GetItemRequest {
@@ -37,12 +39,12 @@ class UserRepositoryImpl(
             val returnedItem = dynamoDbClient.getItem(itemRequest)
             val itemMap: Map<String, AttributeValue> = returnedItem.item!!
             return User(
-                userId= itemMap["PK"]!!.asS(),
-                email=itemMap["email"]!!.asS(),
+                userId = itemMap["PK"]!!.asS(),
+                email = itemMap["email"]!!.asS(),
                 firstName = itemMap["firstName"]!!.asS(),
                 lastName = itemMap["lastName"]!!.asS(),
                 password = itemMap["password"]!!.asS(),
-                creditCardDetails=creditCardConverter.unconvert(itemMap["creditCardDetails"]),
+                creditCardDetails = creditCardConverter.unconvert(itemMap["creditCardDetails"]),
                 isVerified = itemMap["isVerified"]!!.asBool(),
                 shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"])
             )
@@ -53,7 +55,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getAllUsers(
-        pageSize:Int,
+        pageSize: Int,
         lastKey: Map<String, AttributeValue>?
     ): List<User> {
         val queryResponses = mutableListOf<QueryResponse>()
@@ -71,12 +73,12 @@ class UserRepositoryImpl(
         queryResponses.add(queryResult)
         return queryResult.items?.map { itemMap ->
             User(
-                userId= itemMap["PK"]!!.asS(),
-                email=itemMap["email"]!!.asS(),
+                userId = itemMap["PK"]!!.asS(),
+                email = itemMap["email"]!!.asS(),
                 firstName = itemMap["firstName"]!!.asS(),
                 lastName = itemMap["lastName"]!!.asS(),
                 password = itemMap["password"]!!.asS(),
-                creditCardDetails=creditCardConverter.unconvert(itemMap["creditCardDetails"]),
+                creditCardDetails = creditCardConverter.unconvert(itemMap["creditCardDetails"]),
                 isVerified = itemMap["isVerified"]!!.asBool(),
                 shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"])
             )
@@ -87,8 +89,32 @@ class UserRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateUser(user: User): User? {
-        TODO("Not yet implemented")
+    override suspend fun updateUser(user: UserUpdateDTO): User? {
+        keyToGet["PK"] = AttributeValue.S("USER#${user.userId}")
+        keyToGet["PK"] = AttributeValue.S("USER#120499e3-fdfd-440c-1204-bdcd954f4891")
+
+        val shippingAddressConverter = ShippingAddressConverter()
+
+        val attributeUpdates = mapOf(
+            "email" to user.email?.let { AttributeValue.S(it) },
+            "password" to user.password?.let { AttributeValue.S(it) },
+            "firstName" to user.firstName?.let { AttributeValue.S(it) },
+            "lastName" to user.lastName?.let { AttributeValue.S(it) },
+            "shippingAddress" to user.shippingAddress?.let { shippingAddressConverter.convert(it) },
+            "isVerified" to user.isVerified?.let { AttributeValue.Bool(it) }
+        ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+
+        val updateExpression = "SET " + attributeUpdates.keys.joinToString(", ") { "$it = :$it" }
+        val expressionAttributeValues = attributeUpdates.entries.associate { (key, value) -> ":$key" to value }
+
+        val updateItemRequest = UpdateItemRequest {
+            this.tableName = dynamoDbtableName
+            this.key = keyToGet
+            this.updateExpression = updateExpression
+            this.expressionAttributeValues = expressionAttributeValues
+        }
+        dynamoDbClient.updateItem(updateItemRequest)
+        return getUser(user.userId)
     }
 
     override suspend fun deleteUser(userId: String): Boolean? {

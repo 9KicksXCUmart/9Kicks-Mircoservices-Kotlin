@@ -14,7 +14,7 @@ data class User(
     var email:String,
     @DynamoDBAttribute(attributeName = "password")
     private var password:String,
-    @DynamoDBAttribute(attributeName = "firstname")
+    @DynamoDBAttribute(attributeName = "firstName")
     var firstName:String,
     @DynamoDBAttribute(attributeName = "lastName")
     var lastName:String,
@@ -37,6 +37,12 @@ data class User(
         var streetAddress: String = "",
         var district: String = ""
     )
+    fun updatePassword(newPassword:String) {
+        password = newPassword
+    }
+    fun getPassword():String {
+        return password
+    }
 }
 
 
