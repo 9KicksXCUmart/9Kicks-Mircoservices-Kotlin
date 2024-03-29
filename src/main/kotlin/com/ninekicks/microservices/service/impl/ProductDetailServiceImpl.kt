@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository
 class ProductDetailServiceImpl(
         private val productRepository: ProductRepositoryImpl
 ):ProductDetailService {
+
     private val responseHandler = ResponseHandler()
 
     override fun fetchProductDetail(productId: String): ResponseEntity<Any> {
