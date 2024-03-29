@@ -15,7 +15,7 @@ class AccountSummaryController(
         return accountSummaryService.displayUserDetails(userId)
     }
 
-    @PutMapping("/update-profile", consumes = ["application/json"])
+    @PatchMapping("/update-profile", consumes = ["application/json"])
     fun updateUserProfile(@RequestBody userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
         return accountSummaryService.updateUserDetails(userUpdateDTO)
     }

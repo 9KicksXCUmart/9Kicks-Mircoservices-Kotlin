@@ -1,12 +1,10 @@
 package com.ninekicks.microservices.repository.impl
 
-import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
-import aws.sdk.kotlin.services.dynamodb.model.GetItemRequest
-import aws.sdk.kotlin.services.dynamodb.model.QueryRequest
+import aws.sdk.kotlin.services.dynamodb.model.*
 import com.ninekicks.microservices.config.DynamoDBConfig
 import com.ninekicks.microservices.helper.converter.OrderItemDetailListConverter
 import com.ninekicks.microservices.model.Order
-import com.ninekicks.microservices.model.User
+import com.ninekicks.microservices.model.dto.OrderUpdateDTO
 import com.ninekicks.microservices.model.enum.DeliveryStatus
 import com.ninekicks.microservices.model.enum.OrderStatus
 import com.ninekicks.microservices.repository.OrderRepository
@@ -27,14 +25,11 @@ class OrderRepositoryImpl(
 
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("d/M/yyyy H:mm")
 
-    private val keyToGet = mutableMapOf<String, AttributeValue>(
-//        "PK" to AttributeValue.S("USER#"),
-//        "SK" to AttributeValue.S("ORDER#")
-    )
+    private val keyToGet = mutableMapOf<String, AttributeValue>()
 
     override suspend fun getOrdersByUserId(
         userId: String,
-        pageSize: Int,
+        pageSize: Int?,
         lastKey: Map<String, AttributeValue>?
     ): List<Order>? {
         val queryRequest = QueryRequest {
@@ -95,5 +90,28 @@ class OrderRepositoryImpl(
             println(e)
             null
         }
+    }
+
+    override suspend fun updateOrder(orderUpdateDto: OrderUpdateDTO): Order? {
+        keyToGet["PK"] = AttributeValue.S("USER#${orderUpdateDto.userId}")
+        keyToGet["SK"] = AttributeValue.S("ORDER#${orderUpdateDto.orderId}")
+
+        val attributeUpdates = mapOf(
+            "orderStatus" to orderUpdateDto.orderStatus?.let { AttributeValue.S(it.toString()) },
+            "deliveryStatus" to orderUpdateDto.deliveryStatus?.let { AttributeValue.S(it.toString()) },
+        ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+
+        val updateExpression = "SET " + attributeUpdates.keys.joinToString(", ") { "$it = :$it" }
+        val expressionAttributeValues = attributeUpdates.entries.associate { (key, value) -> ":$key" to value }
+
+        val updateItemRequest = UpdateItemRequest {
+            this.tableName = dynamoDbtableName
+            this.key = keyToGet
+            this.updateExpression = updateExpression
+            this.expressionAttributeValues = expressionAttributeValues
+        }
+
+        dynamoDbClient.updateItem(updateItemRequest)
+        return getOrder(orderUpdateDto.userId, orderUpdateDto.orderId)
     }
 }

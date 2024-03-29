@@ -6,7 +6,7 @@ import com.ninekicks.microservices.model.enum.OrderStatus
 import java.time.LocalDateTime
 
 data class OrderDetailDTO (
-    var userId: String = "USER#",
+    val userId: String = "USER#",
     val orderId: String = "ORDER#",
     var orderStatus: Enum<OrderStatus>,
     var deliveryStatus: Enum<DeliveryStatus>,

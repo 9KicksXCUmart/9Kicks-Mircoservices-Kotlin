@@ -10,7 +10,7 @@ interface UserRepository {
         pageSize:Int,
         lastKey: Map<String, AttributeValue>?
     ): List<User>?
-    suspend fun addUser(user: User): User?
+    suspend fun addUser(userUpdateDto: UserUpdateDTO): User?
     suspend fun updateUser(user: UserUpdateDTO): User?
-    suspend fun deleteUser(userId: String): Boolean?
+    suspend fun deleteUser(userId: String): Boolean
 }
