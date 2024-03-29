@@ -5,7 +5,6 @@ import com.ninekicks.microservices.repository.impl.ProductRepositoryImpl
 import com.ninekicks.microservices.service.ProductDetailService
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
-
 import com.ninekicks.microservices.model.Product
 import org.springframework.stereotype.Repository
 
