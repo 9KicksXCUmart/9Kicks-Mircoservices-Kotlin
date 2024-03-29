@@ -1,7 +1,7 @@
 package com.ninekicks.microservices.controller
 
 import com.ninekicks.microservices.config.ResponseHandler
-import com.ninekicks.microservices.model.Product
+
 import com.ninekicks.microservices.service.impl.ProductDetailServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
