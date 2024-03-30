@@ -11,3 +11,12 @@ api:
 
 cors:
   originPatterns: ${CORS_ORIGINS}
+
+spring:
+  security:
+    filter:
+      dispatcher-types:
+        - request
+        - error
+
+go.backend.url: ${GO_BACKEND_URL}

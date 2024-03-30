@@ -39,6 +39,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
     implementation("com.github.derjust:spring-data-dynamodb:5.1.0")
     implementation("com.stripe:stripe-java:24.20.0")
+    implementation ("org.springframework.boot:spring-boot-starter-security")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

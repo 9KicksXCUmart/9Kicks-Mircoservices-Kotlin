@@ -11,7 +11,6 @@ class AccountSummaryController(
     private val accountSummaryService: AccountSummaryServiceImpl,
 ) {
     @GetMapping("/{userId}")
-
     fun displayUserProfile(@PathVariable userId: String): ResponseEntity<Any> {
         return accountSummaryService.displayUserDetails(userId)
     }

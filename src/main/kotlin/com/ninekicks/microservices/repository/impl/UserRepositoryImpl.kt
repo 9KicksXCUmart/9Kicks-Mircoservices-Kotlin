@@ -108,7 +108,7 @@ class UserRepositoryImpl(
 
     override suspend fun updateUser(userUpdateDto: UserUpdateDTO): User? {
         keyToGet["PK"] = AttributeValue.S("USER#${userUpdateDto.userId}")
-        keyToGet["PK"] = AttributeValue.S("USER#120499e3-fdfd-440c-1204-bdcd954f4891")
+//        keyToGet["PK"] = AttributeValue.S("USER#120499e3-fdfd-440c-1204-bdcd954f4891")
 
         val shippingAddressConverter = ShippingAddressConverter()
 
