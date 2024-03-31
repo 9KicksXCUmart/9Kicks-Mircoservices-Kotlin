@@ -23,13 +23,33 @@ class JwtFilter(
     private val appConfig: AppConfig
 ) : OncePerRequestFilter() {
 
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
         val bearerToken = request.getHeader("Authorization")
+        if (bearerToken.isNullOrEmpty()) {
+            filterChain.doFilter(request, response)
+            return
+        }
 
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            val token = bearerToken.substring(7)
-            if (verifyJwtToken(token)!!.isNotEmpty()) {
-                val userDetails = runBlocking {  userRepository.getUser("98ea39e3-fdfd-440c-b931-bdcd954f4891") }
+        if (!bearerToken.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response)
+            return
+        }
+
+        val token = bearerToken.substring(7)
+        if (token.isBlank()) {
+            filterChain.doFilter(request, response)
+            return
+        }
+
+        try {
+            val validationResponseDto = verifyJwtToken(token)
+
+            if (validationResponseDto!!.success) {
+                val userDetails = runBlocking { userRepository.getUser(validationResponseDto.data.userId) }
                 val authToken = UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
@@ -38,12 +58,14 @@ class JwtFilter(
                 authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = authToken
             }
+        } catch (e: Exception) {
+            println(e.message)
+        } finally {
+            filterChain.doFilter(request, response)
         }
-
-        filterChain.doFilter(request, response)
     }
 
-    private fun verifyJwtToken(jwt: String): String? {
+    private fun verifyJwtToken(jwt: String): ValidationResponseDTO? {
         val restTemplate = RestTemplate()
 
         val headers = HttpHeaders()
@@ -51,12 +73,11 @@ class JwtFilter(
 
         val entity = HttpEntity<String>("", headers)
         val response = restTemplate.exchange(
-            "${appConfig.goBackendUrl}/validate",
-            HttpMethod.GET,
+            "${appConfig.goBackendUrl}/v1/auth/validate-token",
+            HttpMethod.POST,
             entity,
             ValidationResponseDTO::class.java
         )
-        println("response: ${response.body?.email}")
-        return response.body?.email
+        return response.body
     }
 }
