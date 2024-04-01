@@ -9,6 +9,7 @@ import com.ninekicks.microservices.repository.impl.OrderRepositoryImpl
 import com.ninekicks.microservices.repository.impl.UserRepositoryImpl
 import com.ninekicks.microservices.service.AdminUserManagementService
 import kotlinx.coroutines.runBlocking
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
@@ -54,11 +55,21 @@ class AdminUserManagementServiceImpl(
         }
     }
 
-    override suspend fun createUser(userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
+    override suspend fun createUser(userUpdateDto: UserUpdateDTO): ResponseEntity<Any> {
         return runBlocking {
-            val user = userRepository.addUser(userUpdateDTO)
+            if (
+                userRepository.getUserByEmail(userUpdateDto.email) != null
+                || userRepository.getUser(userUpdateDto.userId) != null
+            ) {
+                return@runBlocking responseHandler.validateResponse(
+                    failMessage = "User Already Exist",
+                    matchingObject = null,
+                    failReturnObject = null
+                )
+            }
 
-            responseHandler.validateResponse(
+            val user = userRepository.addUser(userUpdateDto)
+            return@runBlocking responseHandler.validateResponse(
                 failMessage = "Unable to Create User",
                 matchingObject = user,
                 failReturnObject = null

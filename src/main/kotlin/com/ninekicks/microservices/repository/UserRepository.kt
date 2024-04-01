@@ -6,11 +6,12 @@ import com.ninekicks.microservices.model.dto.UserUpdateDTO
 
 interface UserRepository {
     suspend fun getUser(userId: String): User?
+    suspend fun getUserByEmail(email: String): User?
     suspend fun getAllUsers(
         pageSize:Int,
         lastKey: Map<String, AttributeValue>?
     ): List<User>?
     suspend fun addUser(userUpdateDto: UserUpdateDTO): User?
-    suspend fun updateUser(user: UserUpdateDTO): User?
+    suspend fun updateUser(userUpdateDto: UserUpdateDTO): User?
     suspend fun deleteUser(userId: String): Boolean
 }

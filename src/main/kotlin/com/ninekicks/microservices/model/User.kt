@@ -3,7 +3,6 @@ package com.ninekicks.microservices.model
 import com.amazonaws.services.dynamodbv2.datamodeling.*
 import com.ninekicks.microservices.helper.converter.CreditCardConverter
 import com.ninekicks.microservices.helper.converter.ShippingAddressConverter
-import org.springframework.security.core.GrantedAuthority
 
 @DynamoDBTable(tableName = "9Kicks")
 data class User(
@@ -24,6 +23,10 @@ data class User(
     var shippingAddress:ShippingAddress,
     @DynamoDBAttribute(attributeName = "isVerified")
     var isVerified:Boolean,
+    @DynamoDBAttribute(attributeName = "verificationToken")
+    var verificationToken:String?,
+    @DynamoDBAttribute(attributeName = "tokenExpiry")
+    var tokenExpiry:Int?,
     @DynamoDBAttribute(attributeName = "creditCardDetails")
     @DynamoDBTypeConverted(converter = CreditCardConverter::class)
     private var creditCardDetails:CreditCardDetails = CreditCardDetails()
