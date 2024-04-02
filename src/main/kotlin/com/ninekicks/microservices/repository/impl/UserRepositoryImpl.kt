@@ -61,7 +61,8 @@ class UserRepositoryImpl(
 
         val queryRequest = QueryRequest {
             this.tableName = dynamoDbtableName
-            this.indexName = "email-PK-index"
+            this.indexName = "User-email-index"
+//            this.indexName = "email-PK-index"
             this.keyConditionExpression = "email = :email"
             this.expressionAttributeValues = mapOf(":email" to AttributeValue.S(email))
         }

@@ -55,6 +55,18 @@ class AdminUserManagementServiceImpl(
         }
     }
 
+    override suspend fun findUserByEmail(email: String): ResponseEntity<Any> {
+        return runBlocking {
+            val user = userRepository.getUserByEmail(email)
+
+            responseHandler.validateResponse(
+                failMessage = "User not found",
+                matchingObject = user,
+                failReturnObject = null
+            )
+        }
+    }
+
     override suspend fun createUser(userUpdateDto: UserUpdateDTO): ResponseEntity<Any> {
         return runBlocking {
             if (

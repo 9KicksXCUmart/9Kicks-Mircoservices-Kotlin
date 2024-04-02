@@ -27,8 +27,12 @@ class SecurityConfig(
                 sessionCreationPolicy = SessionCreationPolicy.STATELESS
             }
             authorizeRequests {
-                authorize("/api/v1/product-browsing**", permitAll)
-                authorize("/api/v1/**", authenticated)
+                // comment out below line for deployment
+                authorize("**", permitAll)
+
+                //comment out below lines for development
+//                authorize("/api/v1/product-browsing**", permitAll)
+//                authorize("/api/v1/**", authenticated)
             }
             addFilterBefore<UsernamePasswordAuthenticationFilter>(JwtFilter(userRepository, appConfig))
         }

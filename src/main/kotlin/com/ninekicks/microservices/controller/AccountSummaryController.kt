@@ -2,6 +2,7 @@ package com.ninekicks.microservices.controller
 
 import com.ninekicks.microservices.model.dto.UserUpdateDTO
 import com.ninekicks.microservices.service.impl.AccountSummaryServiceImpl
+import com.ninekicks.microservices.service.impl.GetAuthenticationServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -9,10 +10,12 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/account-summary")
 class AccountSummaryController(
     private val accountSummaryService: AccountSummaryServiceImpl,
+    private val authenticationService: GetAuthenticationServiceImpl
 ) {
-    @GetMapping("/{userId}")
-    fun displayUserProfile(@PathVariable userId: String): ResponseEntity<Any> {
-        return accountSummaryService.displayUserDetails(userId)
+    @GetMapping("")
+    fun displayUserProfile(): ResponseEntity<Any> {
+        println(authenticationService.getUserId())
+        return accountSummaryService.displayUserDetails(authenticationService.getUserId())
     }
 
     @PatchMapping("/update-profile", consumes = ["application/json"])
@@ -22,19 +25,17 @@ class AccountSummaryController(
 
     @GetMapping("/order-details")
     fun displayOrderDetails(
-        @RequestParam("userId") userId: String,
         @RequestParam("orderId") orderId: String
     ): ResponseEntity<Any> {
-        return accountSummaryService.displayOrderDetails(userId, orderId)
+        return accountSummaryService.displayOrderDetails(authenticationService.getUserId(), orderId)
     }
 
-    @GetMapping("/order-history/{userId}")
+    @GetMapping("/order-history")
     fun displayOrderHistory(
-        @PathVariable userId: String,
         @RequestParam("pagesize") pageSize: Int?,
         @RequestParam("lastkey") lastKey: String?
     ): ResponseEntity<Any> {
-        return accountSummaryService.listOrdersByUserId(userId, pageSize?:10, lastKey)
+        return accountSummaryService.listOrdersByUserId(authenticationService.getUserId(), pageSize?:10, lastKey)
     }
 
 }
