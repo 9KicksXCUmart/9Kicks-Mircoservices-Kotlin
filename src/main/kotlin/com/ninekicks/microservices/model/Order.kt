@@ -24,7 +24,9 @@ data class Order(
     @DynamoDBTypeConverted(converter = ListConverter::class)
     var orderItemDetail: List<OrderItemDetail>? = null,
     @DynamoDBAttribute(attributeName = "totalPrice")
-    var totalPrice: Float
+    var totalPrice: Float,
+    @DynamoDBAttribute(attributeName = "shippingAddress")
+    var shippingAddress: User.ShippingAddress
 ) {
     data class OrderItemDetail(
         var productId: String,

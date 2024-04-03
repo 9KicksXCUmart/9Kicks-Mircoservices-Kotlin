@@ -60,7 +60,8 @@ class AccountSummaryServiceImpl(
                             sizeQuantity = item.sizeQuantity
                         )
                     },
-                    totalPrice = it.totalPrice
+                    totalPrice = it.totalPrice,
+                    shippingAddress = it.shippingAddress
                 )
             }
             responseHandler.validateResponse(
@@ -88,7 +89,8 @@ class AccountSummaryServiceImpl(
                         sizeQuantity = item.sizeQuantity
                     )
                 },
-                totalPrice = order.totalPrice
+                totalPrice = order.totalPrice,
+                shippingAddress = order.shippingAddress
             )
             responseHandler.validateResponse(
                 failMessage = "No orders found",
