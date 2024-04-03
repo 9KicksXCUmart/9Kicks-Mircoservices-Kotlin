@@ -98,9 +98,9 @@ class AccountSummaryServiceImpl(
         }
     }
 
-    override fun updateUserDetails(userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
+    override fun updateUserDetails(userId: String, userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
         return runBlocking {
-            val user = userRepository.updateUser(userUpdateDTO)
+            val user = userRepository.updateUser(userId, userUpdateDTO)
             responseHandler.validateResponse(
                 failMessage = "No user found",
                 matchingObject = user,

@@ -104,7 +104,7 @@ class AdminUserManagementServiceImpl(
 
     override suspend fun updateUser(userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
         return runBlocking {
-            val user = userRepository.updateUser(userUpdateDTO)
+            val user = userRepository.updateUser(userUpdateDTO.userId, userUpdateDTO)
             responseHandler.validateResponse(
                 failMessage = "No user found",
                 matchingObject = user,

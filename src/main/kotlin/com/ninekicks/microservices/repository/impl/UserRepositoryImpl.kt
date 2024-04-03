@@ -144,8 +144,8 @@ class UserRepositoryImpl(
         return getUser(userId)
     }
 
-    override suspend fun updateUser(userUpdateDto: UserUpdateDTO): User? {
-        keyToGet["PK"] = AttributeValue.S("USER#${userUpdateDto.userId}")
+    override suspend fun updateUser(userId: String, userUpdateDto: UserUpdateDTO): User? {
+        keyToGet["PK"] = AttributeValue.S("USER#${userId}")
 //        keyToGet["PK"] = AttributeValue.S("USER#120499e3-fdfd-440c-1204-bdcd954f4891")
 
         val shippingAddressConverter = ShippingAddressConverter()
@@ -169,7 +169,7 @@ class UserRepositoryImpl(
             this.expressionAttributeValues = expressionAttributeValues
         }
         dynamoDbClient.updateItem(updateItemRequest)
-        return getUser(userUpdateDto.userId)
+        return getUser(userId)
     }
 
     override suspend fun deleteUser(userId: String): Boolean {

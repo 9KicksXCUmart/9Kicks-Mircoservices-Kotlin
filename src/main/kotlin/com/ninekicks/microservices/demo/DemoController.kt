@@ -31,10 +31,10 @@ class DemoController(
             listOf("Error")
         }
     }
-    @PutMapping("/test", consumes=["application/json"])
-    suspend fun test(@RequestBody userDto: UserUpdateDTO): User? {
-        return userRepository.updateUser(userDto)
-    }
+//    @PutMapping("/test", consumes=["application/json"])
+//    suspend fun test(@RequestBody userDto: UserUpdateDTO): User? {
+//        return userRepository.updateUser(userDto)
+//    }
 }
 
 

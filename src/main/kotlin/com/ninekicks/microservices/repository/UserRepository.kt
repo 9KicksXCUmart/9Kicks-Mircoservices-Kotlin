@@ -12,6 +12,6 @@ interface UserRepository {
         lastKey: Map<String, AttributeValue>?
     ): List<User>?
     suspend fun addUser(userUpdateDto: UserUpdateDTO): User?
-    suspend fun updateUser(userUpdateDto: UserUpdateDTO): User?
+    suspend fun updateUser(userId: String, userUpdateDto: UserUpdateDTO): User?
     suspend fun deleteUser(userId: String): Boolean
 }

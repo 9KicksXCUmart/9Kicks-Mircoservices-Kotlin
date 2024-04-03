@@ -28,11 +28,11 @@ class SecurityConfig(
             }
             authorizeRequests {
                 // comment out below line for deployment
-                authorize("**", permitAll)
+//                authorize("**", permitAll)
 
                 //comment out below lines for development
-//                authorize("/api/v1/product-browsing**", permitAll)
-//                authorize("/api/v1/**", authenticated)
+                authorize("/api/v1/product-browsing**", permitAll)
+                authorize("/api/v1/**", authenticated)
             }
             addFilterBefore<UsernamePasswordAuthenticationFilter>(JwtFilter(userRepository, appConfig))
         }

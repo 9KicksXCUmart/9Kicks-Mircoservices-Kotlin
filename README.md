@@ -20,7 +20,7 @@ You can add the following environment variable in IntelliJ.
 AWS_ACCESS_KEY_ID=<YOUR-ACCESS-KEY>;
 AWS_SECRET_ACCESS_KEY=<YOUR-SECRET-ACCESS-KEY>;
 AWS_DYNAMODB_TABLE_NAME=9Kicks;
-CORS_ORIGINS=http://localhost:5142;
+CORS_ORIGINS=http://localhost:5173;
 STRIPE_KEY=<YOUR-STRIPE-KEY>;
 GO_BACKEND_URL=http://localhost:9000
 ```

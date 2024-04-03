@@ -51,7 +51,6 @@ class JwtFilter(
             if (validationResponseDto!!.success) {
 
 //                val userDetails = runBlocking { userRepository.getUser("98ea39e3-fdfd-440c-b931-bdcd954f4891") }
-
                 val userDetails = runBlocking { userRepository.getUser(validationResponseDto.data.userId) }
                 val authToken = UsernamePasswordAuthenticationToken(
                     userDetails,

@@ -20,7 +20,7 @@ class AccountSummaryController(
 
     @PatchMapping("/update-profile", consumes = ["application/json"])
     fun updateUserProfile(@RequestBody userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
-        return accountSummaryService.updateUserDetails(userUpdateDTO)
+        return accountSummaryService.updateUserDetails(authenticationService.getUserId(), userUpdateDTO)
     }
 
     @GetMapping("/order-details")
