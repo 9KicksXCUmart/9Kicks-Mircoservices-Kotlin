@@ -1,6 +1,7 @@
 package com.ninekicks.microservices.config
 
 import com.ninekicks.microservices.repository.impl.UserRepositoryImpl
+import jakarta.servlet.Filter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -35,6 +36,7 @@ class SecurityConfig(
                 authorize("/api/v1/**", authenticated)
             }
             addFilterBefore<UsernamePasswordAuthenticationFilter>(JwtFilter(userRepository, appConfig))
+            addFilterBefore<JwtFilter>(LoggingFilter())
         }
 
         return httpSecurity.build()

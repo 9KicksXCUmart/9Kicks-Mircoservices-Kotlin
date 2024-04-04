@@ -18,5 +18,7 @@ spring:
       dispatcher-types:
         - request
         - error
+  config:
+    import: optional:file:.env[.properties]
 
 go.backend.url: ${GO_BACKEND_URL}
