@@ -7,7 +7,7 @@ data class UserUpdateDTO(
     var password: String?,
     var firstName: String?,
     var lastName: String?,
-    var email: String,
+    var email: String?,
     var shippingAddress: User.ShippingAddress?,
     var isVerified: Boolean?,
 ) {

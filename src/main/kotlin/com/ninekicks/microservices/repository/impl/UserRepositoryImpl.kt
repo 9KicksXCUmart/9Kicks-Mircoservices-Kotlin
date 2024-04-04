@@ -126,7 +126,7 @@ class UserRepositoryImpl(
         val itemValues = mapOf(
             "PK" to AttributeValue.S("USER#$userId"),
             "SK" to AttributeValue.S("USER_PROFILE"),
-            "email" to AttributeValue.S(userUpdateDto.email),
+            "email" to AttributeValue.S(userUpdateDto.email!!),
             "password" to AttributeValue.S(userUpdateDto.password!!),
             "firstName" to AttributeValue.S(userUpdateDto.firstName!!),
             "lastName" to AttributeValue.S(userUpdateDto.lastName!!),
@@ -151,7 +151,7 @@ class UserRepositoryImpl(
         val shippingAddressConverter = ShippingAddressConverter()
 
         val attributeUpdates = mapOf(
-            "email" to userUpdateDto.email.let { AttributeValue.S(it) },
+            "email" to userUpdateDto.email?.let { AttributeValue.S(it) },
             "password" to userUpdateDto.password?.let { AttributeValue.S(it) },
             "firstName" to userUpdateDto.firstName?.let { AttributeValue.S(it) },
             "lastName" to userUpdateDto.lastName?.let { AttributeValue.S(it) },

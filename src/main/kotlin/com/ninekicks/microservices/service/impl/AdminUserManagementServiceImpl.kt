@@ -70,7 +70,7 @@ class AdminUserManagementServiceImpl(
     override suspend fun createUser(userUpdateDto: UserUpdateDTO): ResponseEntity<Any> {
         return runBlocking {
             if (
-                userRepository.getUserByEmail(userUpdateDto.email) != null
+                userRepository.getUserByEmail(userUpdateDto.email!!) != null
                 || userRepository.getUser(userUpdateDto.userId) != null
             ) {
                 return@runBlocking responseHandler.validateResponse(
