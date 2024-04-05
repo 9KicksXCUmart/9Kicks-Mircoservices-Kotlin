@@ -5,14 +5,18 @@ import com.ninekicks.microservices.config.DynamoDBConfig
 import com.ninekicks.microservices.helper.converter.OrderItemDetailListConverter
 import com.ninekicks.microservices.helper.converter.ShippingAddressConverter
 import com.ninekicks.microservices.model.Order
+import com.ninekicks.microservices.model.dto.OrderCreateDTO
+import com.ninekicks.microservices.model.dto.OrderDetailDTO
 import com.ninekicks.microservices.model.dto.OrderUpdateDTO
 import com.ninekicks.microservices.model.enum.DeliveryStatus
 import com.ninekicks.microservices.model.enum.OrderStatus
 import com.ninekicks.microservices.repository.OrderRepository
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Repository
 class OrderRepositoryImpl(
@@ -79,6 +83,7 @@ class OrderRepositoryImpl(
         return try {
             val returnedItem = dynamoDbClient.getItem(itemRequest)
             val itemMap: Map<String, AttributeValue> = returnedItem.item!!
+            println(itemMap)
             Order(
                 userId = itemMap["PK"]!!.asS(),
                 orderId = itemMap["SK"]!!.asS(),
@@ -119,4 +124,32 @@ class OrderRepositoryImpl(
         dynamoDbClient.updateItem(updateItemRequest)
         return getOrder(orderUpdateDto.userId, orderUpdateDto.orderId)
     }
+
+    override suspend fun createOrder(orderDetail: OrderCreateDTO): Order? {
+        try {
+
+        val itemValues = mapOf(
+            "PK" to AttributeValue.S("USER#${orderDetail.userId}"),
+            "SK" to AttributeValue.S("ORDER#${orderDetail.orderId}"),
+            "orderStatus" to orderDetail.orderStatus.let { AttributeValue.S(it.toString()) },
+            "deliveryStatus" to orderDetail.deliveryStatus.let { AttributeValue.S(it.toString()) },
+            "orderDate" to AttributeValue.S(dateTimeFormatter.format(LocalDateTime.now()).toString()),
+            "receivedDate" to AttributeValue.S(dateTimeFormatter.format(LocalDateTime.now()).toString()),
+            "orderItemDetail" to  orderDetail.orderItemDetail!!.let {  AttributeValue.L(orderItemDetailListConverter.convert(it)) },
+            "totalPrice" to AttributeValue.N(orderDetail.totalPrice.toString())
+        )
+            println(itemValues)
+        val putItemRequest = PutItemRequest {
+            tableName = dynamoDbtableName
+            item = itemValues
+        }
+            dynamoDbClient.putItem(putItemRequest)
+            return getOrder(orderDetail.userId,orderDetail.orderId)
+        }catch (e:Exception){
+            println(e)
+            return null
+        }
+
+    }
+
 }

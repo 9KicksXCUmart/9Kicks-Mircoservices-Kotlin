@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service
 class AccountSummaryServiceImpl(
     private val userRepository: UserRepositoryImpl,
     private val orderRepository: OrderRepositoryImpl,
-    private val productRepository: ProductRepositoryImpl
 ) : AccountSummaryService {
     private val responseHandler = ResponseHandler()
     override fun displayUserDetails(userId: String): ResponseEntity<Any> {
@@ -54,13 +53,8 @@ class AccountSummaryServiceImpl(
                     deliveryStatus = it.deliveryStatus,
                     orderDate = it.orderDate,
                     receivedDate = it.receivedDate,
-                    orderItemDetail = it.orderItemDetail?.map { item ->
-                        OrderDetailDTO.OrderItemDetail(
-                            product = productRepository.getProductDetail(item.productId),
-                            sizeQuantity = item.sizeQuantity
-                        )
-                    },
-                    totalPrice = it.totalPrice,
+                    orderItemDetail = it.orderItemDetail,
+                    totalPrice = it.totalPrice
                     shippingAddress = it.shippingAddress
                 )
             }
@@ -83,14 +77,10 @@ class AccountSummaryServiceImpl(
                 deliveryStatus = order.deliveryStatus,
                 orderDate = order.orderDate,
                 receivedDate = order.receivedDate,
-                orderItemDetail = order.orderItemDetail?.map { item ->
-                    OrderDetailDTO.OrderItemDetail(
-                        product = productRepository.getProductDetail(item.productId),
-                        sizeQuantity = item.sizeQuantity
-                    )
-                },
-                totalPrice = order.totalPrice,
+                orderItemDetail = order.orderItemDetail,
+                totalPrice = order.totalPrice
                 shippingAddress = order.shippingAddress
+
             )
             responseHandler.validateResponse(
                 failMessage = "No orders found",

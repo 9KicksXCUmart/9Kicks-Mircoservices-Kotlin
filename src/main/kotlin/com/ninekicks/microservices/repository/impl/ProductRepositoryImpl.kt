@@ -3,9 +3,12 @@ package com.ninekicks.microservices.repository.impl
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import aws.sdk.kotlin.services.dynamodb.model.GetItemRequest
 import com.ninekicks.microservices.config.DynamoDBConfig
+
+import com.ninekicks.microservices.helper.converter.ImageUrlConverter
 import com.ninekicks.microservices.helper.converter.ProductSizeConverter
 import com.ninekicks.microservices.helper.converter.AttrToIntConverter
 import com.ninekicks.microservices.helper.converter.DetailImageUrlConverter
+
 import com.ninekicks.microservices.model.Product
 import com.ninekicks.microservices.repository.ProductRepository
 import org.springframework.beans.factory.annotation.Value
@@ -20,8 +23,8 @@ class ProductRepositoryImpl(
     @Value("\${dynamodb.tableName}")
     private val dynamoDbtableName:String? = null
 
+    private val imageUrlConverter = ImageUrlConverter()
     private val productSizeConverter = ProductSizeConverter()
-    private val detailImageUrlConverter = DetailImageUrlConverter()
     private val attrToIntConverter = AttrToIntConverter()
 
     override suspend fun getProductDetail(productId: String): Product? {
@@ -43,11 +46,11 @@ class ProductRepositoryImpl(
                     productCategory = itemMap["productCategory"]!!.asS(),
                     productSlug = itemMap["productSlug"]!!.asS(),
                     imageUrl = itemMap["imageUrl"]!!.asS(),
-                    price = itemMap["price"]!!.asN().toFloat(),
+                    price = itemMap["price"]!!.asN().toDouble(),
                     isDiscount = itemMap["isDiscount"]!!.asBool(),
-                    discountPrice = itemMap["discountPrice"]?.asN()?.toFloat(),
-                    detailImageUrl = productSizeConverter.unconvert(itemMap["detailImageUrl"])!!.map{it.asS()},
-                    productSize = attrToIntConverter.convert(detailImageUrlConverter.unconvert(itemMap["productSize"]))
+                    discountPrice = itemMap["discountPrice"]?.asN()?.toDouble(),
+                    detailImageUrl = imageUrlConverter.unconvert(itemMap["detailImageUrl"])!!.map{it.asS()},
+                    productSize = attrToIntConverter.convert(productSizeConverter.unconvert(itemMap["productSize"]))
             )
 
         }catch(e: Exception) {

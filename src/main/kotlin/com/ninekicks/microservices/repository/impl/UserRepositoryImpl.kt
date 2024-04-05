@@ -2,14 +2,20 @@ package com.ninekicks.microservices.repository.impl
 
 import aws.sdk.kotlin.services.dynamodb.model.*
 import com.ninekicks.microservices.config.DynamoDBConfig
+import com.ninekicks.microservices.helper.converter.AttrToIntConverter
 import com.ninekicks.microservices.helper.converter.CreditCardConverter
 import com.ninekicks.microservices.helper.converter.ShippingAddressConverter
+import com.ninekicks.microservices.helper.converter.ShoppingCartItemConverter
+import com.ninekicks.microservices.model.ShoppingCart
 import com.ninekicks.microservices.model.User
+import com.ninekicks.microservices.model.dto.ShoppingCartUpdateDTO
 import com.ninekicks.microservices.model.dto.UserUpdateDTO
 import com.ninekicks.microservices.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Repository
 import java.util.*
+import kotlin.collections.HashMap
+
 
 @Repository
 class UserRepositoryImpl(
@@ -22,6 +28,8 @@ class UserRepositoryImpl(
 
     private val creditCardConverter = CreditCardConverter()
     private val shippingAddressConverter = ShippingAddressConverter()
+    private val attrToIntConverter = AttrToIntConverter()
+    private val shoppingCartItemConverter = ShoppingCartItemConverter()
 
 
     private val keyToGet = mutableMapOf<String, AttributeValue>(
@@ -149,7 +157,6 @@ class UserRepositoryImpl(
 //        keyToGet["PK"] = AttributeValue.S("USER#120499e3-fdfd-440c-1204-bdcd954f4891")
 
         val shippingAddressConverter = ShippingAddressConverter()
-
         val attributeUpdates = mapOf(
             "email" to userUpdateDto.email?.let { AttributeValue.S(it) },
             "password" to userUpdateDto.password?.let { AttributeValue.S(it) },
@@ -189,4 +196,96 @@ class UserRepositoryImpl(
         }
     }
 
+    override suspend fun getShoppingCartDeatil(userId: String): ShoppingCart? {
+        keyToGet["PK"] = AttributeValue.S("USER#$userId")
+        val itemRequest = GetItemRequest {
+            key = keyToGet
+            tableName = dynamoDbtableName
+        }
+        try {
+            val returnedItem = dynamoDbClient.getItem(itemRequest)
+            val itemMap: Map<String, AttributeValue> = returnedItem.item!!
+            return ShoppingCart(
+                shoppingCartItemDetail = shoppingCartItemConverter.unconvert(itemMap["shoppingCartItemDetail"])!!
+            )
+        } catch (e: DynamoDbException) {
+            println(e)
+        }
+        return null
+    }
+
+    override suspend fun updateShoppingCartDeatil(shoppingCartUpdateDTO: ShoppingCartUpdateDTO): Boolean {
+        keyToGet["PK"] = AttributeValue.S("USER#${shoppingCartUpdateDTO.userId}")
+        var shoppingCart: ShoppingCart?= getShoppingCartDeatil(shoppingCartUpdateDTO.userId)
+        var originDetail = shoppingCart?.shoppingCartItemDetail?.toMutableMap()
+        originDetail?.put(UUID.randomUUID().toString(), ShoppingCart.ItemDetail(
+            productId = shoppingCartUpdateDTO.productId,
+            price= shoppingCartUpdateDTO.price,
+            productQuantity= shoppingCartUpdateDTO.productQuantity,
+            imageUrl= shoppingCartUpdateDTO.imageUrl,
+            productSize= shoppingCartUpdateDTO.productSize,
+            productName= shoppingCartUpdateDTO.productName,
+            productCategory= shoppingCartUpdateDTO.productCategory))
+        val attributeUpdates = mapOf( "shoppingCartItemDetail" to  shoppingCartItemConverter.convert(originDetail!!) ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+        val updateExpression = "SET " + attributeUpdates.keys.joinToString(", ") { "$it = :$it" }
+        val expressionAttributeValues = attributeUpdates.entries.associate { (key, value) -> ":$key" to value }
+        try{
+            val updateItemRequest = UpdateItemRequest {
+                this.tableName = dynamoDbtableName
+                this.key = keyToGet
+                this.updateExpression = updateExpression
+                this.expressionAttributeValues = expressionAttributeValues
+            }
+            dynamoDbClient.updateItem(updateItemRequest)
+            return true
+        }catch (e:Exception){
+            println(e)
+            return false
+        }
+    }
+
+    override suspend fun deleteShoppingCartItem(userId: String, itemId: String): Boolean {
+        keyToGet["PK"] = AttributeValue.S("USER#$userId")
+        var shoppingCart: ShoppingCart?= getShoppingCartDeatil(userId)
+        if(shoppingCart?.shoppingCartItemDetail?.get(itemId)==null||shoppingCart==null) return true
+        var removeItem = shoppingCart?.shoppingCartItemDetail?.toMutableMap()
+        removeItem?.remove(itemId)
+        val attributeUpdates = mapOf( "shoppingCartItemDetail" to  shoppingCartItemConverter.convert(removeItem!!) ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+        val updateExpression = "SET " + attributeUpdates.keys.joinToString(", ") { "$it = :$it" }
+        val expressionAttributeValues = attributeUpdates.entries.associate { (key, value) -> ":$key" to value }
+        try{
+            val updateItemRequest = UpdateItemRequest {
+                this.tableName = dynamoDbtableName
+                this.key = keyToGet
+                this.updateExpression = updateExpression
+                this.expressionAttributeValues = expressionAttributeValues
+            }
+            dynamoDbClient.updateItem(updateItemRequest)
+            return true
+        }catch (e:Exception){
+            println(e)
+            return false
+         }
+        }
+
+    override suspend fun clearShoppingCartItems(userId: String): Boolean {
+        keyToGet["PK"] = AttributeValue.S("USER#$userId")
+        var clearItem:Map<String, ShoppingCart.ItemDetail> = HashMap()
+        val attributeUpdates = mapOf( "shoppingCartItemDetail" to  shoppingCartItemConverter.convert(clearItem!!) ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+        val updateExpression = "SET " + attributeUpdates.keys.joinToString(", ") { "$it = :$it" }
+        val expressionAttributeValues = attributeUpdates.entries.associate { (key, value) -> ":$key" to value }
+        try{
+            val updateItemRequest = UpdateItemRequest {
+                this.tableName = dynamoDbtableName
+                this.key = keyToGet
+                this.updateExpression = updateExpression
+                this.expressionAttributeValues = expressionAttributeValues
+            }
+            dynamoDbClient.updateItem(updateItemRequest)
+            return true
+        }catch (e:Exception){
+            println(e)
+            return false
+        }
+    }
 }
