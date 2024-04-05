@@ -1,7 +1,9 @@
 package com.ninekicks.microservices.repository
 
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
+import com.ninekicks.microservices.model.ShoppingCart
 import com.ninekicks.microservices.model.User
+import com.ninekicks.microservices.model.dto.ShoppingCartUpdateDTO
 import com.ninekicks.microservices.model.dto.UserUpdateDTO
 
 interface UserRepository {
@@ -13,4 +15,8 @@ interface UserRepository {
     suspend fun addUser(userUpdateDto: UserUpdateDTO): User?
     suspend fun updateUser(user: UserUpdateDTO): User?
     suspend fun deleteUser(userId: String): Boolean
+    suspend fun getShoppingCartDeatil(userId: String): ShoppingCart?
+    suspend fun updateShoppingCartDeatil(shoppingCartUpdateDTO: ShoppingCartUpdateDTO): Boolean
+    suspend fun deleteShoppingCartItem(userId: String, itemId:String): Boolean
+    suspend fun clearShoppingCartItems(userId:String): Boolean
 }

@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service
 class AccountSummaryServiceImpl(
     private val userRepository: UserRepositoryImpl,
     private val orderRepository: OrderRepositoryImpl,
-    private val productRepository: ProductRepositoryImpl
 ) : AccountSummaryService {
     private val responseHandler = ResponseHandler()
     override fun displayUserDetails(userId: String): ResponseEntity<Any> {
@@ -54,12 +53,7 @@ class AccountSummaryServiceImpl(
                     deliveryStatus = it.deliveryStatus,
                     orderDate = it.orderDate,
                     receivedDate = it.receivedDate,
-                    orderItemDetail = it.orderItemDetail?.map { item ->
-                        OrderDetailDTO.OrderItemDetail(
-                            product = productRepository.getProductDetail(item.productId),
-                            sizeQuantity = item.sizeQuantity
-                        )
-                    },
+                    orderItemDetail = it.orderItemDetail,
                     totalPrice = it.totalPrice
                 )
             }
@@ -82,12 +76,7 @@ class AccountSummaryServiceImpl(
                 deliveryStatus = order.deliveryStatus,
                 orderDate = order.orderDate,
                 receivedDate = order.receivedDate,
-                orderItemDetail = order.orderItemDetail?.map { item ->
-                    OrderDetailDTO.OrderItemDetail(
-                        product = productRepository.getProductDetail(item.productId),
-                        sizeQuantity = item.sizeQuantity
-                    )
-                },
+                orderItemDetail = order.orderItemDetail,
                 totalPrice = order.totalPrice
             )
             responseHandler.validateResponse(

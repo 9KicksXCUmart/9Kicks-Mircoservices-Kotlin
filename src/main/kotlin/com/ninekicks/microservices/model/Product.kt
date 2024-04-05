@@ -22,11 +22,11 @@ data class Product(
         @DynamoDBAttribute(attributeName = "imageUrl")
         var imageUrl:String,
         @DynamoDBAttribute(attributeName = "price")
-        var price: Float,
+        var price: Double,
         @DynamoDBAttribute(attributeName = "isDiscount")
         var isDiscount:Boolean,
         @DynamoDBAttribute(attributeName = "discountPrice")
-        var discountPrice: Float?,
+        var discountPrice: Double?,
         @DynamoDBAttribute(attributeName = "detailImageUrl")
         @DynamoDBTypeConverted(converter = ListConverter::class)
         var detailImageUrl: List<String>,
