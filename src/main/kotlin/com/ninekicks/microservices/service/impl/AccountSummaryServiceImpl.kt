@@ -55,6 +55,7 @@ class AccountSummaryServiceImpl(
                     receivedDate = it.receivedDate,
                     orderItemDetail = it.orderItemDetail,
                     totalPrice = it.totalPrice
+                    shippingAddress = it.shippingAddress
                 )
             }
             responseHandler.validateResponse(
@@ -78,6 +79,8 @@ class AccountSummaryServiceImpl(
                 receivedDate = order.receivedDate,
                 orderItemDetail = order.orderItemDetail,
                 totalPrice = order.totalPrice
+                shippingAddress = order.shippingAddress
+
             )
             responseHandler.validateResponse(
                 failMessage = "No orders found",
@@ -87,9 +90,9 @@ class AccountSummaryServiceImpl(
         }
     }
 
-    override fun updateUserDetails(userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
+    override fun updateUserDetails(userId: String, userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
         return runBlocking {
-            val user = userRepository.updateUser(userUpdateDTO)
+            val user = userRepository.updateUser(userId, userUpdateDTO)
             responseHandler.validateResponse(
                 failMessage = "No user found",
                 matchingObject = user,

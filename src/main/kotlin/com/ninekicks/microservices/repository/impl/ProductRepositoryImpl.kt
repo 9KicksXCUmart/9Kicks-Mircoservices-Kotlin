@@ -3,9 +3,12 @@ package com.ninekicks.microservices.repository.impl
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import aws.sdk.kotlin.services.dynamodb.model.GetItemRequest
 import com.ninekicks.microservices.config.DynamoDBConfig
+
 import com.ninekicks.microservices.helper.converter.ImageUrlConverter
-import com.ninekicks.microservices.helper.converter.AttrToIntConverter
 import com.ninekicks.microservices.helper.converter.ProductSizeConverter
+import com.ninekicks.microservices.helper.converter.AttrToIntConverter
+import com.ninekicks.microservices.helper.converter.DetailImageUrlConverter
+
 import com.ninekicks.microservices.model.Product
 import com.ninekicks.microservices.repository.ProductRepository
 import org.springframework.beans.factory.annotation.Value

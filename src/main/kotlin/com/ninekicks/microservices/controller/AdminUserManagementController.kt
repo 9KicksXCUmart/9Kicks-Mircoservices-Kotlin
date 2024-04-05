@@ -20,9 +20,14 @@ class AdminUserManagementController(
         return adminUserManagementService.findAllUsers(pageSize ?: 10, lastKey)
     }
 
-    @GetMapping("/{userId}")
-    suspend fun displayUser(@PathVariable userId: String): ResponseEntity<Any> {
+    @GetMapping("/id/{userId}")
+    suspend fun displayUserById(@PathVariable userId: String): ResponseEntity<Any> {
         return adminUserManagementService.findUserById(userId)
+    }
+
+    @GetMapping("/email/{email}")
+    suspend fun displayUserByEmail(@PathVariable email: String): ResponseEntity<Any> {
+        return adminUserManagementService.findUserByEmail(email)
     }
 
     @PatchMapping("/update", consumes = ["application/json"])

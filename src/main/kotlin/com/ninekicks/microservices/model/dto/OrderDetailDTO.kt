@@ -2,6 +2,7 @@ package com.ninekicks.microservices.model.dto
 
 import com.ninekicks.microservices.model.Order
 import com.ninekicks.microservices.model.Product
+import com.ninekicks.microservices.model.User
 import com.ninekicks.microservices.model.enum.DeliveryStatus
 import com.ninekicks.microservices.model.enum.OrderStatus
 import java.time.LocalDateTime
@@ -14,7 +15,8 @@ data class OrderDetailDTO (
     var orderDate: LocalDateTime,
     var receivedDate: LocalDateTime? = null,
     var orderItemDetail: List<Order.OrderItemDetail>? = null,
-    var totalPrice: Float
+    var totalPrice: Float,
+    var shippingAddress: User.ShippingAddress
 ) {
 
 }

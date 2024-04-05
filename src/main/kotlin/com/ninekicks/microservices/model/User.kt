@@ -23,6 +23,10 @@ data class User(
     var shippingAddress:ShippingAddress,
     @DynamoDBAttribute(attributeName = "isVerified")
     var isVerified:Boolean,
+    @DynamoDBAttribute(attributeName = "verificationToken")
+    var verificationToken:String?,
+    @DynamoDBAttribute(attributeName = "tokenExpiry")
+    var tokenExpiry:Int?,
     @DynamoDBAttribute(attributeName = "creditCardDetails")
     @DynamoDBTypeConverted(converter = CreditCardConverter::class)
     private var creditCardDetails:CreditCardDetails = CreditCardDetails()

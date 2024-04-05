@@ -3,6 +3,7 @@ package com.ninekicks.microservices.repository.impl
 import aws.sdk.kotlin.services.dynamodb.model.*
 import com.ninekicks.microservices.config.DynamoDBConfig
 import com.ninekicks.microservices.helper.converter.OrderItemDetailListConverter
+import com.ninekicks.microservices.helper.converter.ShippingAddressConverter
 import com.ninekicks.microservices.model.Order
 import com.ninekicks.microservices.model.dto.OrderCreateDTO
 import com.ninekicks.microservices.model.dto.OrderDetailDTO
@@ -20,12 +21,13 @@ import java.util.*
 @Repository
 class OrderRepositoryImpl(
     private val dynamoDBConfig: DynamoDBConfig
-): OrderRepository {
+) : OrderRepository {
     private val dynamoDbClient by lazy { dynamoDBConfig.dynamoDbClient() }
 
     @Value("\${dynamodb.tableName}")
-    private val dynamoDbtableName:String? = null
+    private val dynamoDbtableName: String? = null
     private val orderItemDetailListConverter = OrderItemDetailListConverter()
+    private val shippingAddressConverter = ShippingAddressConverter()
 
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("d/M/yyyy H:mm")
 
@@ -59,8 +61,9 @@ class OrderRepositoryImpl(
                     receivedDate = itemMap["receivedDate"]?.asS()?.takeIf { it.isNotBlank() }
                         ?.let { LocalDateTime.parse(it, dateTimeFormatter) },
                     orderItemDetail = orderItemDetailListConverter.unconvert(itemMap["orderItemDetail"]?.asL())!!,
-                    totalPrice = itemMap["totalPrice"]!!.asN().toFloat()
-                )
+                    totalPrice = itemMap["totalPrice"]!!.asN().toFloat(),
+                    shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"]),
+                    )
             }
         } catch (e: Exception) {
             println(e)
@@ -82,14 +85,16 @@ class OrderRepositoryImpl(
             val itemMap: Map<String, AttributeValue> = returnedItem.item!!
             println(itemMap)
             Order(
-                userId= itemMap["PK"]!!.asS(),
+                userId = itemMap["PK"]!!.asS(),
                 orderId = itemMap["SK"]!!.asS(),
                 orderStatus = enumValueOf<OrderStatus>(itemMap["orderStatus"]!!.asS()),
                 deliveryStatus = enumValueOf<DeliveryStatus>(itemMap["deliveryStatus"]!!.asS()),
                 orderDate = LocalDateTime.parse(itemMap["orderDate"]!!.asS(), dateTimeFormatter),
-                receivedDate = itemMap["receivedDate"]?.asS()?.takeIf { it.isNotBlank() }?.let { LocalDateTime.parse(it,dateTimeFormatter) },
+                receivedDate = itemMap["receivedDate"]?.asS()?.takeIf { it.isNotBlank() }
+                    ?.let { LocalDateTime.parse(it, dateTimeFormatter) },
                 orderItemDetail = orderItemDetailListConverter.unconvert(itemMap["orderItemDetail"]?.asL())!!,
-                totalPrice = itemMap["totalPrice"]!!.asN().toFloat()
+                totalPrice = itemMap["totalPrice"]!!.asN().toFloat(),
+                shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"]),
             )
         } catch (e: Exception) {
             println(e)

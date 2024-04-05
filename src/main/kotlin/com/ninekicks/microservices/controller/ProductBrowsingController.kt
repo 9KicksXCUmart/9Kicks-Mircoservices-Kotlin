@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController
 class ProductBrowsingController(
         private val productBrowsingService: ProductDetailServiceImpl
 ) {
-    val responseHandler = ResponseHandler()
-
     @GetMapping("")
     fun fetchProductDetail(@RequestParam("productId") productId:String): ResponseEntity<Any> {
         return productBrowsingService.fetchProductDetail(productId)

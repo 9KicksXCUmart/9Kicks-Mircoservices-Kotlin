@@ -55,7 +55,41 @@ class UserRepositoryImpl(
                 password = itemMap["password"]!!.asS(),
                 creditCardDetails = creditCardConverter.unconvert(itemMap["creditCardDetails"]),
                 isVerified = itemMap["isVerified"]!!.asBool(),
-                shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"])
+                shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"]),
+                verificationToken = itemMap["verificationToken"]?.asS(),
+                tokenExpiry = itemMap["tokenExpiry"]?.asN()?.toInt()
+            )
+        } catch (e: Exception) {
+            println(e)
+        }
+        return null
+    }
+
+    override suspend fun getUserByEmail(email: String): User? {
+
+        val queryRequest = QueryRequest {
+            this.tableName = dynamoDbtableName
+            this.indexName = "User-email-index"
+//            this.indexName = "email-PK-index"
+            this.keyConditionExpression = "email = :email"
+            this.expressionAttributeValues = mapOf(":email" to AttributeValue.S(email))
+        }
+
+        try {
+            val queryResult = dynamoDbClient.query(queryRequest)
+            val itemMap = queryResult.items!![0]
+
+            return User(
+                userId = itemMap["PK"]!!.asS(),
+                email = itemMap["email"]!!.asS(),
+                firstName = itemMap["firstName"]!!.asS(),
+                lastName = itemMap["lastName"]!!.asS(),
+                password = itemMap["password"]!!.asS(),
+                creditCardDetails = creditCardConverter.unconvert(itemMap["creditCardDetails"]),
+                isVerified = itemMap["isVerified"]!!.asBool(),
+                shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"]),
+                verificationToken = itemMap["verificationToken"]?.asS(),
+                tokenExpiry = itemMap["tokenExpiry"]?.asN()?.toInt()
             )
         } catch (e: Exception) {
             println(e)
@@ -88,7 +122,9 @@ class UserRepositoryImpl(
                 password = itemMap["password"]!!.asS(),
                 creditCardDetails = creditCardConverter.unconvert(itemMap["creditCardDetails"]),
                 isVerified = itemMap["isVerified"]!!.asBool(),
-                shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"])
+                shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"]),
+                verificationToken = itemMap["verificationToken"]?.asS(),
+                tokenExpiry = itemMap["tokenExpiry"]?.asN()?.toInt()
             )
         } ?: listOf()
     }
@@ -98,12 +134,14 @@ class UserRepositoryImpl(
         val itemValues = mapOf(
             "PK" to AttributeValue.S("USER#$userId"),
             "SK" to AttributeValue.S("USER_PROFILE"),
-            "email" to AttributeValue.S(userUpdateDto.email),
+            "email" to AttributeValue.S(userUpdateDto.email!!),
             "password" to AttributeValue.S(userUpdateDto.password!!),
             "firstName" to AttributeValue.S(userUpdateDto.firstName!!),
             "lastName" to AttributeValue.S(userUpdateDto.lastName!!),
             "shippingAddress" to shippingAddressConverter.convert(userUpdateDto.shippingAddress!!),
-            "isVerified" to AttributeValue.Bool(userUpdateDto.isVerified!!)
+            "isVerified" to AttributeValue.Bool(userUpdateDto.isVerified!!),
+            "verificationToken" to AttributeValue.S(""),
+            "tokenExpiry" to AttributeValue.N("0")
         )
 
         val putItemRequest = PutItemRequest {
@@ -114,12 +152,13 @@ class UserRepositoryImpl(
         return getUser(userId)
     }
 
-    override suspend fun updateUser(userUpdateDto: UserUpdateDTO): User? {
-        keyToGet["PK"] = AttributeValue.S("USER#${userUpdateDto.userId}")
+    override suspend fun updateUser(userId: String, userUpdateDto: UserUpdateDTO): User? {
+        keyToGet["PK"] = AttributeValue.S("USER#${userId}")
+//        keyToGet["PK"] = AttributeValue.S("USER#120499e3-fdfd-440c-1204-bdcd954f4891")
 
         val shippingAddressConverter = ShippingAddressConverter()
         val attributeUpdates = mapOf(
-            "email" to userUpdateDto.email.let { AttributeValue.S(it) },
+            "email" to userUpdateDto.email?.let { AttributeValue.S(it) },
             "password" to userUpdateDto.password?.let { AttributeValue.S(it) },
             "firstName" to userUpdateDto.firstName?.let { AttributeValue.S(it) },
             "lastName" to userUpdateDto.lastName?.let { AttributeValue.S(it) },
@@ -137,7 +176,7 @@ class UserRepositoryImpl(
             this.expressionAttributeValues = expressionAttributeValues
         }
         dynamoDbClient.updateItem(updateItemRequest)
-        return getUser(userUpdateDto.userId)
+        return getUser(userId)
     }
 
     override suspend fun deleteUser(userId: String): Boolean {
