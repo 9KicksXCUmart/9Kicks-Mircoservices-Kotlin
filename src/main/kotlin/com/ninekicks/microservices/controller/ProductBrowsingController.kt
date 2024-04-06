@@ -1,6 +1,7 @@
 package com.ninekicks.microservices.controller
 
 import com.ninekicks.microservices.config.ResponseHandler
+import com.ninekicks.microservices.model.dto.ProductDiscountPriceDTO
 
 import com.ninekicks.microservices.service.impl.ProductDetailServiceImpl
 import org.springframework.http.ResponseEntity
@@ -17,6 +18,11 @@ class ProductBrowsingController(
     @GetMapping("")
     fun fetchProductDetail(@RequestParam("productId") productId:String): ResponseEntity<Any> {
         return productBrowsingService.fetchProductDetail(productId)
+    }
+
+    @GetMapping("/test")
+    fun fetchProductDiscountedPrice(@RequestParam("productId") productId:String): ProductDiscountPriceDTO? {
+        return productBrowsingService.fetchProductDiscountedPrice(productId)
     }
 
 }

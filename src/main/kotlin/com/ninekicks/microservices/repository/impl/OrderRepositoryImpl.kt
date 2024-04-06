@@ -136,7 +136,8 @@ class OrderRepositoryImpl(
             "orderDate" to AttributeValue.S(dateTimeFormatter.format(LocalDateTime.now()).toString()),
             "receivedDate" to AttributeValue.S(dateTimeFormatter.format(LocalDateTime.now()).toString()),
             "orderItemDetail" to  orderDetail.orderItemDetail!!.let {  AttributeValue.L(orderItemDetailListConverter.convert(it)) },
-            "totalPrice" to AttributeValue.N(orderDetail.totalPrice.toString())
+            "totalPrice" to AttributeValue.N(orderDetail.totalPrice.toString()),
+            "shippingAddress" to shippingAddressConverter.convert(orderDetail.shippingAddress!!),
         )
             println(itemValues)
         val putItemRequest = PutItemRequest {
