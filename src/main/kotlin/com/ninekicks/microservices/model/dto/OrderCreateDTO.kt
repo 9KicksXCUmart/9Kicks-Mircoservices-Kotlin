@@ -13,6 +13,7 @@ class OrderCreateDTO(
     var deliveryStatus:String,
     var orderItemDetail: List<Order.OrderItemDetail>? = null,
     var totalPrice: Float,
-    var shippingAddress: User.ShippingAddress
+    var shippingAddress: User.ShippingAddress,
+    var deliveryType: String
 ){
 }

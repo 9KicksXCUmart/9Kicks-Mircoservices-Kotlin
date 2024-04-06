@@ -88,7 +88,7 @@ class PaymentServiceImpl(
             println(e)
         }finally {
             return responseHandler.validateResponse(
-                failMessage = "Fail to create paymentIntent",
+                failMessage = "Fail to get order summary",
                 matchingObject = productPriceDetail,
                 failReturnObject = null
 

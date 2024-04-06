@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*
 import com.ninekicks.microservices.helper.ListConverter
 import com.ninekicks.microservices.helper.converter.OrderItemDetailListConverter
 import com.ninekicks.microservices.model.enum.DeliveryStatus
+import com.ninekicks.microservices.model.enum.DeliveryType
 import com.ninekicks.microservices.model.enum.OrderStatus
 import java.time.LocalDateTime
 
@@ -27,7 +28,9 @@ data class Order(
     @DynamoDBAttribute(attributeName = "totalPrice")
     var totalPrice: Float,
     @DynamoDBAttribute(attributeName = "shippingAddress")
-    var shippingAddress: User.ShippingAddress
+    var shippingAddress: User.ShippingAddress,
+    @DynamoDBAttribute(attributeName = "deliveryType")
+    var deliveryType: Enum<DeliveryType>
 ) {
     data class OrderItemDetail(
         var productId: String,

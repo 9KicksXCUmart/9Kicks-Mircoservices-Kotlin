@@ -55,7 +55,8 @@ class AccountSummaryServiceImpl(
                     receivedDate = it.receivedDate,
                     orderItemDetail = it.orderItemDetail,
                     totalPrice = it.totalPrice,
-                    shippingAddress = it.shippingAddress
+                    shippingAddress = it.shippingAddress,
+                    deliveryType = it.deliveryType
                 )
             }
             responseHandler.validateResponse(
@@ -79,7 +80,8 @@ class AccountSummaryServiceImpl(
                 receivedDate = order.receivedDate,
                 orderItemDetail = order.orderItemDetail,
                 totalPrice = order.totalPrice,
-                shippingAddress = order.shippingAddress
+                shippingAddress = order.shippingAddress,
+                deliveryType = order.deliveryType
 
             )
             responseHandler.validateResponse(

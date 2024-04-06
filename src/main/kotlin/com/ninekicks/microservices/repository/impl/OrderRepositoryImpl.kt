@@ -9,6 +9,7 @@ import com.ninekicks.microservices.model.dto.OrderCreateDTO
 import com.ninekicks.microservices.model.dto.OrderDetailDTO
 import com.ninekicks.microservices.model.dto.OrderUpdateDTO
 import com.ninekicks.microservices.model.enum.DeliveryStatus
+import com.ninekicks.microservices.model.enum.DeliveryType
 import com.ninekicks.microservices.model.enum.OrderStatus
 import com.ninekicks.microservices.repository.OrderRepository
 import kotlinx.coroutines.runBlocking
@@ -63,6 +64,7 @@ class OrderRepositoryImpl(
                     orderItemDetail = orderItemDetailListConverter.unconvert(itemMap["orderItemDetail"]?.asL())!!,
                     totalPrice = itemMap["totalPrice"]!!.asN().toFloat(),
                     shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"]),
+                    deliveryType = enumValueOf<DeliveryType>(itemMap["deliveryType"]!!.asS())
                     )
             }
         } catch (e: Exception) {
@@ -95,6 +97,7 @@ class OrderRepositoryImpl(
                 orderItemDetail = orderItemDetailListConverter.unconvert(itemMap["orderItemDetail"]?.asL())!!,
                 totalPrice = itemMap["totalPrice"]!!.asN().toFloat(),
                 shippingAddress = shippingAddressConverter.unconvert(itemMap["shippingAddress"]),
+                deliveryType = enumValueOf<DeliveryType>(itemMap["deliveryType"]!!.asS())
             )
         } catch (e: Exception) {
             println(e)
@@ -131,13 +134,14 @@ class OrderRepositoryImpl(
         val itemValues = mapOf(
             "PK" to AttributeValue.S("USER#${orderDetail.userId}"),
             "SK" to AttributeValue.S("ORDER#${orderDetail.orderId}"),
-            "orderStatus" to orderDetail.orderStatus.let { AttributeValue.S(it.toString()) },
-            "deliveryStatus" to orderDetail.deliveryStatus.let { AttributeValue.S(it.toString()) },
+            "orderStatus" to orderDetail.orderStatus.let { AttributeValue.S(it) },
+            "deliveryStatus" to orderDetail.deliveryStatus.let { AttributeValue.S(it) },
             "orderDate" to AttributeValue.S(dateTimeFormatter.format(LocalDateTime.now()).toString()),
             "receivedDate" to AttributeValue.S(dateTimeFormatter.format(LocalDateTime.now()).toString()),
             "orderItemDetail" to  orderDetail.orderItemDetail!!.let {  AttributeValue.L(orderItemDetailListConverter.convert(it)) },
             "totalPrice" to AttributeValue.N(orderDetail.totalPrice.toString()),
             "shippingAddress" to shippingAddressConverter.convert(orderDetail.shippingAddress!!),
+            "deliveryType" to orderDetail.deliveryType.let { AttributeValue.S(it) },
         )
             println(itemValues)
         val putItemRequest = PutItemRequest {
