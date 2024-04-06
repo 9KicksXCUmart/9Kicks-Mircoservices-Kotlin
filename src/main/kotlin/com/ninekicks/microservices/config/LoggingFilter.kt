@@ -20,8 +20,7 @@ class LoggingFilter : Filter {
             chain?.doFilter(request, response)
         } finally {
             val duration = System.nanoTime() - startTime
-            val logEntry = "[SB] ${Instant.now()} | ${httpResponse.status} | ${formatDuration(duration)} \t | " +
-                    "${request.remoteAddr} | ${httpRequest.method} \"${httpRequest.requestURI}\""
+            val logEntry = "[SB] ${Instant.now()} \t | \t ${httpResponse.status} \t | \t ${formatDuration(duration)} \t | \t ${request.remoteAddr} \t | ${httpRequest.method} \"${httpRequest.requestURI}\""
             println(logEntry)
         }
     }

@@ -54,10 +54,12 @@ class AccountSummaryServiceImpl(
                     orderDate = it.orderDate,
                     receivedDate = it.receivedDate,
                     orderItemDetail = it.orderItemDetail,
-                    totalPrice = it.totalPrice
+                    totalPrice = it.totalPrice,
                     shippingAddress = it.shippingAddress
                 )
             }
+            println("ordeDetails")
+            println(orderDetailDtoList)
             responseHandler.validateResponse(
                 failMessage = "No orders found",
                 matchingObject = orderDetailDtoList,
@@ -78,7 +80,7 @@ class AccountSummaryServiceImpl(
                 orderDate = order.orderDate,
                 receivedDate = order.receivedDate,
                 orderItemDetail = order.orderItemDetail,
-                totalPrice = order.totalPrice
+                totalPrice = order.totalPrice,
                 shippingAddress = order.shippingAddress
 
             )
