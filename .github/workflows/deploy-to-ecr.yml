@@ -76,6 +76,7 @@ jobs:
         id: get-tag
         run: |
           bash ./scripts/git_update.sh
+          bash chmod +x ./gradlew
 
       - name: Build, tag and push the docker image to ECR
         env:
