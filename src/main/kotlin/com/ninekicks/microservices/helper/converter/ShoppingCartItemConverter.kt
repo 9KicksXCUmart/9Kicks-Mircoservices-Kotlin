@@ -17,6 +17,7 @@ class ShoppingCartItemConverter : DynamoDBTypeConverter<AttributeValue, Map<Stri
             detailMap["productQuantity"]= AttributeValue.N(it.value.productQuantity.toString())
             detailMap["imageUrl"]= AttributeValue.S(it.value.imageUrl)
             detailMap["productSize"]= AttributeValue.S(it.value.productSize)
+            detailMap["originalPrice"]= AttributeValue.N(it.value.originalPrice.toString())
             detailMap["productName"]= AttributeValue.S(it.value.productName)
             detailMap["productCategory"]= AttributeValue.S(it.value.productCategory)
             itemMap[it.key] = AttributeValue.M(detailMap)
@@ -37,6 +38,7 @@ class ShoppingCartItemConverter : DynamoDBTypeConverter<AttributeValue, Map<Stri
                     productSize = map["productSize"]?.asS()?:"",
                     productName= map["productName"]?.asS()?:"",
                     productCategory= map["productCategory"]?.asS()?:"",
+                    originalPrice= map["originalPrice"]?.asN()?.toDouble()?:0.0,
                 )
                 itemDetailMap?.put(it.key, itemDetail!!)
             }

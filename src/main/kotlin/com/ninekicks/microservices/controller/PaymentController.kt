@@ -28,4 +28,9 @@ class PaymentController(
     fun createOrderRecord(@RequestBody orderDetail: OrderCreateDTO): ResponseEntity<Any> {
         return paymentService.createOrderRecord(orderDetail,authenticationService.getUserId() )
     }
+    
+    @PostMapping("/test")
+    fun test(@RequestBody orderDetail: OrderCreateDTO): Boolean {
+        return paymentService.updateStock(orderDetail.orderItemDetail)
+    }
 }

@@ -1,10 +1,13 @@
 package com.ninekicks.microservices.service.impl
 
+import com.ninekicks.microservices.config.AppConfig
 import com.ninekicks.microservices.config.ResponseHandler
+import com.ninekicks.microservices.model.Order
 import com.ninekicks.microservices.model.ShoppingCart
 import com.ninekicks.microservices.model.dto.OrderCreateDTO
 import com.ninekicks.microservices.model.dto.ProductDiscountPriceDTO
 import com.ninekicks.microservices.model.dto.ProductPriceDetailDTO
+import com.ninekicks.microservices.model.dto.StockUpdateResponseDTO
 import com.ninekicks.microservices.repository.impl.OrderRepositoryImpl
 import com.ninekicks.microservices.repository.impl.UserRepositoryImpl
 import com.ninekicks.microservices.service.PaymentService
@@ -15,8 +18,12 @@ import com.stripe.param.PaymentIntentCreateParams
 import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.web.client.RestTemplate
 
 
 @Service
@@ -26,7 +33,8 @@ class PaymentServiceImpl(
     private val userRepository: UserRepositoryImpl,
     private val orderRepository: OrderRepositoryImpl,
     private val productDetailService: ProductDetailServiceImpl,
-    private val shoppingCartService: ShoppingCartServiceImpl
+    private val shoppingCartService: ShoppingCartServiceImpl,
+    private val appConfig: AppConfig
 ):PaymentService{
     @PostConstruct
     fun init() {
@@ -103,7 +111,7 @@ class PaymentServiceImpl(
         var itemCount: Int = 0
         try{
             runBlocking {
-                shoppingCartDetail = userRepository.getShoppingCartDeatil(userId)
+                shoppingCartDetail = userRepository.getShoppingCartDetail(userId)
             }
             shoppingCartDetail?.shoppingCartItemDetail?.forEach {
                 itemCount += it.value.productQuantity
@@ -133,11 +141,32 @@ class PaymentServiceImpl(
         return runBlocking {
             val order = orderRepository.createOrder(orderDetail,userId)
             shoppingCartService.clearShoppingCartItems(userId)
+            updateStock(orderDetail.orderItemDetail)
             responseHandler.validateResponse(
                 failMessage = "Unable to Create Order",
                 matchingObject = order,
                 failReturnObject = null
             )
+        }
+    }
+
+    override fun updateStock(list:List<Order.OrderItemDetail>?): Boolean {
+        return try{
+            list!!.forEach {
+                val restTemplate = RestTemplate()
+                val headers = HttpHeaders()
+                val entity = HttpEntity<String>("", headers)
+                restTemplate.exchange(
+                    "${appConfig.goBackendUrl}/v1/products/${it.productId}?size=${it.productSize}&sold=${it.productQuantity}",
+                    HttpMethod.POST,
+                    entity,
+                    StockUpdateResponseDTO::class.java
+                )
+            }
+            true
+        }catch (e:Exception){
+            println(e)
+            false
         }
     }
 }
