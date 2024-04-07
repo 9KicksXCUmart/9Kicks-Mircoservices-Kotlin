@@ -23,7 +23,7 @@ class CreditCardConverter : DynamoDBTypeConverter<AttributeValue, User.CreditCar
                     yy = map["creditCardYY"]?.asN()?.toInt() ?: 0,
                     cvv = map["creditCardCVV"]?.asN()?.toInt() ?: 0,
                 )
-            }
+            } ?: User.CreditCardDetails()
         } catch (e: Exception){
             println(e)
         }

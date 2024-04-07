@@ -138,7 +138,7 @@ class UserRepositoryImpl(
             "password" to AttributeValue.S(userUpdateDto.password!!),
             "firstName" to AttributeValue.S(userUpdateDto.firstName!!),
             "lastName" to AttributeValue.S(userUpdateDto.lastName!!),
-            "shippingAddress" to shippingAddressConverter.convert(userUpdateDto.shippingAddress!!),
+            "shippingAddress" to shippingAddressConverter.convert(userUpdateDto.shippingAddress),
             "isVerified" to AttributeValue.Bool(userUpdateDto.isVerified!!),
             "verificationToken" to AttributeValue.S(""),
             "tokenExpiry" to AttributeValue.N("0")
