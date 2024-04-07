@@ -71,7 +71,6 @@ class PaymentServiceImpl(
                 failMessage = "Fail to create paymentIntent",
                 matchingObject = detail,
                 failReturnObject = null
-
             )
         }
      }
