@@ -1,37 +1,40 @@
 package com.ninekicks.microservices.controller
 
-import com.ninekicks.microservices.repository.impl.OrderRepositoryImpl
+import com.ninekicks.microservices.model.dto.UserUpdateDTO
 import com.ninekicks.microservices.service.impl.AccountSummaryServiceImpl
+import com.ninekicks.microservices.service.impl.GetAuthenticationServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/account-summary")
-class AccountSummaryController (
+class AccountSummaryController(
     private val accountSummaryService: AccountSummaryServiceImpl,
+    private val authenticationService: GetAuthenticationServiceImpl
 ) {
-    @GetMapping("/{userId}")
-    fun displayUserProfile(@PathVariable userId:String): ResponseEntity<Any> {
-        return accountSummaryService.displayUserDetails(userId)
+    @GetMapping("")
+    fun displayUserProfile(): ResponseEntity<Any> {
+        println(authenticationService.getUserId())
+        return accountSummaryService.displayUserDetails(authenticationService.getUserId())
     }
 
-    @PutMapping("/{userId}")
-    fun updateUserProfile(@PathVariable userId:String): ResponseEntity<Any> {
-        TODO()
-    }
-
-    @GetMapping("/order-history")
-    fun displayOrderHistory(): ResponseEntity<Any> {
-        TODO()
+    @PatchMapping("/update-profile", consumes = ["application/json"])
+    fun updateUserProfile(@RequestBody userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
+        return accountSummaryService.updateUserDetails(authenticationService.getUserId(), userUpdateDTO)
     }
 
     @GetMapping("/order-details")
-    fun displayOrderDetails(): ResponseEntity<Any> {
-        TODO()
+    fun displayOrderDetails(
+        @RequestParam("orderId") orderId: String
+    ): ResponseEntity<Any> {
+        return accountSummaryService.displayOrderDetails(authenticationService.getUserId(), orderId)
     }
 
-    @GetMapping("/order-history/{userId}")
-    fun displayOrderHistory(@PathVariable userId:String): ResponseEntity<Any> {
-        return accountSummaryService.listOrdersByUserId(userId, 10, null)
+    @GetMapping("/order-history")
+    fun displayOrderHistory(
+        @RequestParam("pagesize") pageSize: Int?,
+        @RequestParam("lastkey") lastKey: String?
+    ): ResponseEntity<Any> {
+        return accountSummaryService.listOrdersByUserId(authenticationService.getUserId(), pageSize?:10, lastKey)
     }
 }

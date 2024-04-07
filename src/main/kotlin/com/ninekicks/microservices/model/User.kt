@@ -14,7 +14,7 @@ data class User(
     var email:String,
     @DynamoDBAttribute(attributeName = "password")
     private var password:String,
-    @DynamoDBAttribute(attributeName = "firstname")
+    @DynamoDBAttribute(attributeName = "firstName")
     var firstName:String,
     @DynamoDBAttribute(attributeName = "lastName")
     var lastName:String,
@@ -23,6 +23,10 @@ data class User(
     var shippingAddress:ShippingAddress,
     @DynamoDBAttribute(attributeName = "isVerified")
     var isVerified:Boolean,
+    @DynamoDBAttribute(attributeName = "verificationToken")
+    var verificationToken:String?,
+    @DynamoDBAttribute(attributeName = "tokenExpiry")
+    var tokenExpiry:Int?,
     @DynamoDBAttribute(attributeName = "creditCardDetails")
     @DynamoDBTypeConverted(converter = CreditCardConverter::class)
     private var creditCardDetails:CreditCardDetails = CreditCardDetails()
@@ -37,6 +41,12 @@ data class User(
         var streetAddress: String = "",
         var district: String = ""
     )
+    fun updatePassword(newPassword:String) {
+        password = newPassword
+    }
+    fun getPassword():String {
+        return password
+    }
 }
 
 

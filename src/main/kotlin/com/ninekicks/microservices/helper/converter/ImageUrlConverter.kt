@@ -1,9 +1,9 @@
-package com.ninekicks.microservices.helper
+package com.ninekicks.microservices.helper.converter
 
 import aws.sdk.kotlin.services.dynamodb.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter
 
-class ProductSizeConverter : DynamoDBTypeConverter<AttributeValue, List<AttributeValue>> {
+class ImageUrlConverter : DynamoDBTypeConverter<AttributeValue, List<AttributeValue>> {
     override fun convert(list: List<AttributeValue>): AttributeValue {
         return AttributeValue.L(list)
     }
