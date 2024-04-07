@@ -16,7 +16,11 @@ class WebServerConfiguration {
     fun addCorsConfig(): WebMvcConfigurer {
         return object : WebMvcConfigurer {
             override fun addCorsMappings(registry: CorsRegistry) {
-                val allowedOrigins = corsOriginPatterns.split(",").toTypedArray()
+                var allowedOrigins = corsOriginPatterns.split(",").toTypedArray()
+                allowedOrigins += "http://localhost:5173"
+                allowedOrigins += "https://9kicks.shop"
+                allowedOrigins += "https://www.9kicks.shop"
+                allowedOrigins += "https://9-kicks-shop.vercel.app/"
                 registry.addMapping("/**")
                     .allowedMethods("*")
                     .allowedOriginPatterns(*allowedOrigins)
