@@ -37,5 +37,4 @@ class AccountSummaryController(
     ): ResponseEntity<Any> {
         return accountSummaryService.listOrdersByUserId(authenticationService.getUserId(), pageSize?:10, lastKey)
     }
-
 }
