@@ -8,6 +8,7 @@ class ShoppingCartUpdateDTO(
     var productSize:String,
     var productName:String,
     var productCategory:String,
+    var originalPrice:Double,
 ){
 
 }

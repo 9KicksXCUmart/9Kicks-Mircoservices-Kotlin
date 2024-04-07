@@ -3,12 +3,9 @@ package com.ninekicks.microservices.service.impl
 import com.ninekicks.microservices.config.AppConfig
 import com.ninekicks.microservices.config.ResponseHandler
 import com.ninekicks.microservices.model.ShoppingCart
-import com.ninekicks.microservices.model.dto.ProductResponseDTO
 import com.ninekicks.microservices.model.dto.ShoppingCartUpdateDTO
 import com.ninekicks.microservices.model.dto.StockResponseDTO
-import com.ninekicks.microservices.repository.impl.ProductRepositoryImpl
 import com.ninekicks.microservices.repository.impl.UserRepositoryImpl
-import com.ninekicks.microservices.service.ProductDetailService
 import com.ninekicks.microservices.service.ShoppingCartService
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.HttpEntity
@@ -27,7 +24,7 @@ class ShoppingCartServiceImpl(
 
     override fun fetchShoppingCartItems(userId: String): ResponseEntity<Any> {
         return runBlocking {
-            val shoppingCart = userRepository.getShoppingCartDeatil(userId)
+            val shoppingCart = userRepository.getShoppingCartDetail(userId)
             responseHandler.validateResponse(
                 failMessage = "shoppingCart not found",
                 matchingObject = shoppingCart,
@@ -38,7 +35,7 @@ class ShoppingCartServiceImpl(
 
     override fun updateShoppingCartDetail(shoppingCartUpdateDTO: ShoppingCartUpdateDTO, userId: String): ResponseEntity<Any> {
         return runBlocking {
-            val isAdded = userRepository.updateShoppingCartDeatil(shoppingCartUpdateDTO,userId)
+            val isAdded = userRepository.updateShoppingCartDetail(shoppingCartUpdateDTO,userId)
             responseHandler.validateResponse(
                 failMessage = "shoppingCart not found",
                 matchingObject = isAdded,
@@ -73,7 +70,7 @@ class ShoppingCartServiceImpl(
         var list:MutableList<String> = ArrayList()
         val shoppingCart:ShoppingCart?
         runBlocking {
-        shoppingCart = userRepository.getShoppingCartDeatil(userId)
+        shoppingCart = userRepository.getShoppingCartDetail(userId)
         }
         shoppingCart?.shoppingCartItemDetail?.forEach{
             val restTemplate = RestTemplate()

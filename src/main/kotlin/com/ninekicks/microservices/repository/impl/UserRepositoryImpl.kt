@@ -196,7 +196,7 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun getShoppingCartDeatil(userId: String): ShoppingCart? {
+    override suspend fun getShoppingCartDetail(userId: String): ShoppingCart? {
         keyToGet["PK"] = AttributeValue.S("USER#$userId")
         val itemRequest = GetItemRequest {
             key = keyToGet
@@ -214,9 +214,9 @@ class UserRepositoryImpl(
         return null
     }
 
-    override suspend fun updateShoppingCartDeatil(shoppingCartUpdateDTO: ShoppingCartUpdateDTO,userId: String): Boolean {
+    override suspend fun updateShoppingCartDetail(shoppingCartUpdateDTO: ShoppingCartUpdateDTO, userId: String): Boolean {
         keyToGet["PK"] = AttributeValue.S("USER#${userId}")
-        var shoppingCart: ShoppingCart?= getShoppingCartDeatil(userId)
+        var shoppingCart: ShoppingCart?= getShoppingCartDetail(userId)
         var originDetail = shoppingCart?.shoppingCartItemDetail?.toMutableMap()
         originDetail?.put(UUID.randomUUID().toString(), ShoppingCart.ItemDetail(
             productId = shoppingCartUpdateDTO.productId,
@@ -225,7 +225,9 @@ class UserRepositoryImpl(
             imageUrl= shoppingCartUpdateDTO.imageUrl,
             productSize= shoppingCartUpdateDTO.productSize,
             productName= shoppingCartUpdateDTO.productName,
-            productCategory= shoppingCartUpdateDTO.productCategory))
+            productCategory= shoppingCartUpdateDTO.productCategory,
+            originalPrice= shoppingCartUpdateDTO.originalPrice
+        ))
         val attributeUpdates = mapOf( "shoppingCartItemDetail" to  shoppingCartItemConverter.convert(originDetail!!) ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
         val updateExpression = "SET " + attributeUpdates.keys.joinToString(", ") { "$it = :$it" }
         val expressionAttributeValues = attributeUpdates.entries.associate { (key, value) -> ":$key" to value }
@@ -246,7 +248,7 @@ class UserRepositoryImpl(
 
     override suspend fun deleteShoppingCartItem(userId: String, itemId: String): Boolean {
         keyToGet["PK"] = AttributeValue.S("USER#$userId")
-        var shoppingCart: ShoppingCart?= getShoppingCartDeatil(userId)
+        var shoppingCart: ShoppingCart?= getShoppingCartDetail(userId)
         if(shoppingCart?.shoppingCartItemDetail?.get(itemId)==null||shoppingCart==null) return true
         var removeItem = shoppingCart?.shoppingCartItemDetail?.toMutableMap()
         removeItem?.remove(itemId)

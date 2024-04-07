@@ -15,6 +15,7 @@ data class ShoppingCart(
             var productQuantity:Int  = 0,
             var imageUrl:String  = "",
             var productSize:String = "",
+            var originalPrice:Double= 0.0,
             var productName:String = "",
             var productCategory:String = "",
         )
