@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17.0.10_7-jre-alpine 
+FROM eclipse-temurin:17-jdk-jammy
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN chmod +x ./gradlew
 RUN ./gradlew clean
-RUN ./gradlew build --scan
+RUN ./gradlew build --warning-mode all
 
 EXPOSE 8080
 
