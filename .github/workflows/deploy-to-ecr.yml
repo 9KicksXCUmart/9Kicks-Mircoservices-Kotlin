@@ -16,10 +16,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: configure aws
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: ${{ secrets.AWS_REGION_NAME }}
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/Github-Action-ECR
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Setup terraform
         uses: hashicorp/setup-terraform@v3
@@ -43,8 +44,7 @@ jobs:
             -backend-config='skip_region_validation=true' \
             -backend-config='skip_credentials_validation=true' \
             -backend-config='region=${{ secrets.AWS_REGION_NAME }}' \
-            -backend-config='key=docker-ecr/terraform-${{ env.ECR_REPO_NAME }}.tfstate' \
-            -backend-config='role_arn=arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/Github-Action-ECR'
+            -backend-config='key=docker-ecr/terraform-${{ env.ECR_REPO_NAME }}.tfstate'
 
       - name: TF apply
         shell: bash
@@ -63,6 +63,14 @@ jobs:
         run: |
           touch .env
           echo ECR_REPO_NAME=${{ env.ECR_REPO_NAME }} >> .env
+          echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} >> .env
+          echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> .env
+          echo AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} >> .env
+          echo AWS_DYNAMODB_TABLE_NAME=${{ secrets.AWS_DYNAMODB_TABLE_NAME}} >> .env
+          echo CORS_ORIGINS=${{ secrets.CORS_ORIGINS }} >> .env
+          echo GO_BACKEND_URL=${{ secrets.GO_BACKEND_URL }} >> .env
+          echo STRIPE_KEY=${{ secrets.STRIPE_KEY }} >> .env
+          echo AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} >> .env
 
       - name: Get the latest version image tag
         id: get-tag
