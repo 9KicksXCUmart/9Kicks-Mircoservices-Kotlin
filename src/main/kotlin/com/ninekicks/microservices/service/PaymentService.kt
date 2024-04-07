@@ -1,5 +1,6 @@
 package com.ninekicks.microservices.service
 
+import com.ninekicks.microservices.model.Order
 import com.ninekicks.microservices.model.dto.OrderCreateDTO
 import com.ninekicks.microservices.model.dto.OrderDetailDTO
 import com.ninekicks.microservices.model.dto.ProductPriceDetailDTO
@@ -12,4 +13,5 @@ interface PaymentService {
     fun getOrderSummary(userId:String): ResponseEntity<Any>
     fun getPriceDetail(userId:String): ProductPriceDetailDTO?
     fun createOrderRecord(orderDetail:OrderCreateDTO,userId: String):ResponseEntity<Any>
+    fun updateStock(list:List<Order.OrderItemDetail>?):Boolean
 }

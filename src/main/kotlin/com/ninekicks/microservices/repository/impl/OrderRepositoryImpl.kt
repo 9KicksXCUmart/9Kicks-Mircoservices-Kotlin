@@ -143,7 +143,6 @@ class OrderRepositoryImpl(
             "shippingAddress" to shippingAddressConverter.convert(orderDetail.shippingAddress!!),
             "deliveryType" to orderDetail.deliveryType.let { AttributeValue.S(it) },
         )
-            println(itemValues)
         val putItemRequest = PutItemRequest {
             tableName = dynamoDbtableName
             item = itemValues
