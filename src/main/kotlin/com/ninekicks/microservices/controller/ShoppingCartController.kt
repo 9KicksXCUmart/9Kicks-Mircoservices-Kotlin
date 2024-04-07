@@ -35,10 +35,9 @@ class ShoppingCartController(
     fun clearShoppingCartItem(): ResponseEntity<Any>{
         return shoppingCartService.clearShoppingCartItems(authenticationService.getUserId())
     }
-
+    
     @GetMapping("/validCheck")
     fun shoppingCartItemCheck(): ResponseEntity<Any>{
         return shoppingCartService.shoppingCartItemCheck(authenticationService.getUserId())
     }
-
 }
