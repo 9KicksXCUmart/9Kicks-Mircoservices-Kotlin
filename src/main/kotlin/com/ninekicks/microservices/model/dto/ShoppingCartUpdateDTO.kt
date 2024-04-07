@@ -1,7 +1,6 @@
 package com.ninekicks.microservices.model.dto
 
 class ShoppingCartUpdateDTO(
-    var userId:String,
     var productId:String,
     var price:Double,
     var productQuantity:Int,

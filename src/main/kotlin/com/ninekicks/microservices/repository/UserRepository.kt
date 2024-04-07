@@ -17,7 +17,7 @@ interface UserRepository {
     suspend fun updateUser(userId: String, userUpdateDto: UserUpdateDTO): User?
     suspend fun deleteUser(userId: String): Boolean
     suspend fun getShoppingCartDeatil(userId: String): ShoppingCart?
-    suspend fun updateShoppingCartDeatil(shoppingCartUpdateDTO: ShoppingCartUpdateDTO): Boolean
+    suspend fun updateShoppingCartDeatil(shoppingCartUpdateDTO: ShoppingCartUpdateDTO, userId: String): Boolean
     suspend fun deleteShoppingCartItem(userId: String, itemId:String): Boolean
     suspend fun clearShoppingCartItems(userId:String): Boolean
 }

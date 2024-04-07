@@ -214,9 +214,9 @@ class UserRepositoryImpl(
         return null
     }
 
-    override suspend fun updateShoppingCartDeatil(shoppingCartUpdateDTO: ShoppingCartUpdateDTO): Boolean {
-        keyToGet["PK"] = AttributeValue.S("USER#${shoppingCartUpdateDTO.userId}")
-        var shoppingCart: ShoppingCart?= getShoppingCartDeatil(shoppingCartUpdateDTO.userId)
+    override suspend fun updateShoppingCartDeatil(shoppingCartUpdateDTO: ShoppingCartUpdateDTO,userId: String): Boolean {
+        keyToGet["PK"] = AttributeValue.S("USER#${userId}")
+        var shoppingCart: ShoppingCart?= getShoppingCartDeatil(userId)
         var originDetail = shoppingCart?.shoppingCartItemDetail?.toMutableMap()
         originDetail?.put(UUID.randomUUID().toString(), ShoppingCart.ItemDetail(
             productId = shoppingCartUpdateDTO.productId,

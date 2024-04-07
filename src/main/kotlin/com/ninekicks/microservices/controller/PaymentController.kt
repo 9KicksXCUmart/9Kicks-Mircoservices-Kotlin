@@ -26,7 +26,6 @@ class PaymentController(
 
     @PostMapping("/create-order-record")
     fun createOrderRecord(@RequestBody orderDetail: OrderCreateDTO): ResponseEntity<Any> {
-        orderDetail.userId = authenticationService.getUserId()
-        return paymentService.createOrderRecord(orderDetail)
+        return paymentService.createOrderRecord(orderDetail,authenticationService.getUserId() )
     }
 }

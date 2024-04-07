@@ -11,5 +11,5 @@ interface PaymentService {
     fun summarizeConfirmationToken(confirmationTokenDetail: ConfirmationToken):Map<String,Any>
     fun getOrderSummary(userId:String): ResponseEntity<Any>
     fun getPriceDetail(userId:String): ProductPriceDetailDTO?
-    fun createOrderRecord(orderDetail:OrderCreateDTO):ResponseEntity<Any>
+    fun createOrderRecord(orderDetail:OrderCreateDTO,userId: String):ResponseEntity<Any>
 }

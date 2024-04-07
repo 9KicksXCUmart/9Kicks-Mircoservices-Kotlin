@@ -130,10 +130,10 @@ class PaymentServiceImpl(
         }
     }
 
-    override fun createOrderRecord(orderDetail: OrderCreateDTO): ResponseEntity<Any> {
+    override fun createOrderRecord(orderDetail: OrderCreateDTO,userId: String): ResponseEntity<Any> {
         return runBlocking {
-            val order = orderRepository.createOrder(orderDetail)
-            shoppingCartService.clearShoppingCartItems(orderDetail.userId)
+            val order = orderRepository.createOrder(orderDetail,userId)
+            shoppingCartService.clearShoppingCartItems(userId)
             responseHandler.validateResponse(
                 failMessage = "Unable to Create Order",
                 matchingObject = order,

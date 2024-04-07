@@ -23,8 +23,7 @@ class ShoppingCartController(
 
     @PatchMapping("/update")
     fun updateShoppingCartDetail(@RequestBody shoppingCartUpdateDTO:ShoppingCartUpdateDTO): ResponseEntity<Any> {
-        shoppingCartUpdateDTO.userId = authenticationService.getUserId()
-        return shoppingCartService.updateShoppingCartDetail(shoppingCartUpdateDTO)
+        return shoppingCartService.updateShoppingCartDetail(shoppingCartUpdateDTO,authenticationService.getUserId())
     }
 
     @PatchMapping("/delete")

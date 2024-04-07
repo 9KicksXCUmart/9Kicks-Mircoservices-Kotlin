@@ -27,9 +27,9 @@ class ShoppingCartServiceImpl(
         }
     }
 
-    override fun updateShoppingCartDetail(shoppingCartUpdateDTO: ShoppingCartUpdateDTO): ResponseEntity<Any> {
+    override fun updateShoppingCartDetail(shoppingCartUpdateDTO: ShoppingCartUpdateDTO, userId: String): ResponseEntity<Any> {
         return runBlocking {
-            val isAdded = userRepository.updateShoppingCartDeatil(shoppingCartUpdateDTO)
+            val isAdded = userRepository.updateShoppingCartDeatil(shoppingCartUpdateDTO,userId)
             responseHandler.validateResponse(
                 failMessage = "shoppingCart not found",
                 matchingObject = isAdded,

@@ -10,5 +10,5 @@ interface OrderRepository {
     suspend fun getOrdersByUserId(userId: String, pageSize:Int?, lastKey: Map<String, AttributeValue>?): List<Order>?
     suspend fun getOrder(userId: String, orderId: String): Order?
     suspend fun updateOrder(orderUpdateDto: OrderUpdateDTO): Order?
-    suspend fun createOrder(orderDetail: OrderCreateDTO): Order?
+    suspend fun createOrder(orderDetail: OrderCreateDTO,userId: String): Order?
 }

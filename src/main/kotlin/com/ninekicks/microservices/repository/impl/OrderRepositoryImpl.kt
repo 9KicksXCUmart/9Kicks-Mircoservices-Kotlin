@@ -128,11 +128,11 @@ class OrderRepositoryImpl(
         return getOrder(orderUpdateDto.userId, orderUpdateDto.orderId)
     }
 
-    override suspend fun createOrder(orderDetail: OrderCreateDTO): Order? {
+    override suspend fun createOrder(orderDetail: OrderCreateDTO,userId: String): Order? {
         try {
 
         val itemValues = mapOf(
-            "PK" to AttributeValue.S("USER#${orderDetail.userId}"),
+            "PK" to AttributeValue.S("USER#${userId}"),
             "SK" to AttributeValue.S("ORDER#${orderDetail.orderId}"),
             "orderStatus" to orderDetail.orderStatus.let { AttributeValue.S(it) },
             "deliveryStatus" to orderDetail.deliveryStatus.let { AttributeValue.S(it) },
@@ -149,7 +149,7 @@ class OrderRepositoryImpl(
             item = itemValues
         }
             dynamoDbClient.putItem(putItemRequest)
-            return getOrder(orderDetail.userId,orderDetail.orderId)
+            return getOrder(userId,orderDetail.orderId)
         }catch (e:Exception){
             println(e)
             return null
