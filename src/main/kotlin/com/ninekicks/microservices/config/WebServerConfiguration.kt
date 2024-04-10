@@ -20,7 +20,9 @@ class WebServerConfiguration {
                 allowedOrigins += "http://localhost:5173"
                 allowedOrigins += "https://9kicks.shop"
                 allowedOrigins += "https://www.9kicks.shop"
-                allowedOrigins += "https://9-kicks-shop.vercel.app/"
+                allowedOrigins += "https://9-kicks-shop.vercel.app"
+                allowedOrigins += "https://www.admin.9kicks.shop"
+                allowedOrigins += "https://admin.9kicks.shop"
                 registry.addMapping("/**")
                     .allowedMethods("*")
                     .allowedOriginPatterns(*allowedOrigins)
