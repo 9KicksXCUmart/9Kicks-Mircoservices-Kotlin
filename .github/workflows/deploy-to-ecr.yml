@@ -1,0 +1,87 @@
+name: Docker image build and publish
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  push-to-ecr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: configure aws
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: setup the ECR repo name by the Github repo
+        shell: bash
+        run: |
+          set -eux    #catch error
+          # lowercase the name
+          repo="${GITHUB_REPOSITORY,,}"
+
+          # replace / with _
+          echo "ECR_REPO_NAME=${repo//\//_}" >> $GITHUB_ENV
+
+      - name: TF init
+        shell: bash
+        run: |
+          set -eux    
+          terraform init -upgrade -reconfigure \
+            -backend-config='skip_metadata_api_check=true' \
+            -backend-config='skip_region_validation=true' \
+            -backend-config='skip_credentials_validation=true' \
+            -backend-config='region=${{ secrets.AWS_REGION_NAME }}' \
+            -backend-config='key=docker-ecr/terraform-${{ env.ECR_REPO_NAME }}.tfstate'
+
+      - name: TF apply
+        shell: bash
+        run: |
+          set -eux
+          terraform apply \
+            -var 'repository_name=${{ env.ECR_REPO_NAME }}' \
+            -auto-approve
+        continue-on-error: true
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Create env file
+        run: |
+          touch .env
+          echo ECR_REPO_NAME=${{ env.ECR_REPO_NAME }} >> .env
+          echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} >> .env
+          echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> .env
+          echo AWS_REGION_NAME=${{ secrets.AWS_REGION_NAME }} >> .env
+          echo AWS_DYNAMODB_TABLE_NAME=${{ secrets.AWS_DYNAMODB_TABLE_NAME}} >> .env
+          echo CORS_ORIGINS=${{ secrets.CORS_ORIGINS }} >> .env
+          echo GO_BACKEND_URL=${{ secrets.GO_BACKEND_URL }} >> .env
+          echo STRIPE_KEY=${{ secrets.STRIPE_KEY }} >> .env
+          echo AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} >> .env
+
+      - name: Get the latest version image tag
+        id: get-tag
+        run: |
+          bash ./scripts/git_update.sh
+
+      - name: Build, tag and push the docker image to ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{env.ECR_REPO_NAME}}
+          IMAGE_TAG: ${{ steps.get-tag.outputs.lastest_tag }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
