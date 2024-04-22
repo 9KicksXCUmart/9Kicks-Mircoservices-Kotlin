@@ -23,23 +23,26 @@ class JwtFilter(
     private val appConfig: AppConfig
 ) : OncePerRequestFilter() {
 
+    // Create filter for every incoming API requests
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
         val bearerToken = request.getHeader("Authorization")
+        // Check if the Auth Token from the header is Null or Empty
         if (bearerToken.isNullOrEmpty()) {
             filterChain.doFilter(request, response)
             return
         }
-
+        // Check if the header contains the token that starts with 'Bearer'
         if (!bearerToken.startsWith("Bearer ")) {
             filterChain.doFilter(request, response)
             return
         }
 
         val token = bearerToken.substring(7)
+        // Check if the token retrieved is blank
         if (token.isBlank()) {
             filterChain.doFilter(request, response)
             return
@@ -47,10 +50,9 @@ class JwtFilter(
 
         try {
             val validationResponseDto = verifyJwtToken(token)
-
+            // If validation is success, get the corresponding user and save the user
+            // to SpringBoot's Security Context
             if (validationResponseDto!!.success) {
-
-//                val userDetails = runBlocking { userRepository.getUser("98ea39e3-fdfd-440c-b931-bdcd954f4891") }
                 val userDetails = runBlocking { userRepository.getUser(validationResponseDto.data.userId) }
                 val authToken = UsernamePasswordAuthenticationToken(
                     userDetails,
@@ -67,6 +69,7 @@ class JwtFilter(
         }
     }
 
+    // Call external API from another Backend Service (GO GIN) to verify JWT Token
     private fun verifyJwtToken(jwt: String): ValidationResponseDTO? {
         val restTemplate = RestTemplate()
 

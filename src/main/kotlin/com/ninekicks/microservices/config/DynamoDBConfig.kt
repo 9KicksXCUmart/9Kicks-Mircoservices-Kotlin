@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Scope
 
+// Create a global DynamoDB client for doing CRUD with the database
 @Configuration
 class DynamoDBConfig {
     @Value("\${cloud.aws.credentials.accessKey}")

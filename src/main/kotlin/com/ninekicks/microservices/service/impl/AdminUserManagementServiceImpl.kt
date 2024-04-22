@@ -20,11 +20,13 @@ class AdminUserManagementServiceImpl(
 ): AdminUserManagementService {
     private val responseHandler = ResponseHandler()
 
+    // List all the existing Users
+    // Can select Page Size and create pagination with Last User ID
     override suspend fun findAllUsers(
         pageSize: Int,
         lastUserKey: String?
     ): ResponseEntity<Any> {
-
+        // check if Last Order ID exist, if yes, it will be applied to the Query
         val lastEvaluatedKey = lastUserKey?.let {
             mapOf(
                 "PK" to AttributeValue.S("USER#$lastUserKey"),
@@ -43,6 +45,7 @@ class AdminUserManagementServiceImpl(
         }
     }
 
+    // Get User by User ID
     override suspend fun findUserById(userId: String): ResponseEntity<Any> {
         return runBlocking {
             val user = userRepository.getUser(userId)
@@ -55,6 +58,7 @@ class AdminUserManagementServiceImpl(
         }
     }
 
+    // Get User by Email Address
     override suspend fun findUserByEmail(email: String): ResponseEntity<Any> {
         return runBlocking {
             val user = userRepository.getUserByEmail(email)
@@ -67,8 +71,11 @@ class AdminUserManagementServiceImpl(
         }
     }
 
+    // Create User by passing in User Update DTO
     override suspend fun createUser(userUpdateDto: UserUpdateDTO): ResponseEntity<Any> {
         return runBlocking {
+
+            // Check if the inputted Email and User ID exist in the database
             if (
                 userRepository.getUserByEmail(userUpdateDto.email!!) != null
                 || userRepository.getUser(userUpdateDto.userId) != null
@@ -80,6 +87,7 @@ class AdminUserManagementServiceImpl(
                 )
             }
 
+            // if no corresponding Email and User ID exist, create a new User
             val user = userRepository.addUser(userUpdateDto)
             return@runBlocking responseHandler.validateResponse(
                 failMessage = "Unable to Create User",
@@ -89,6 +97,7 @@ class AdminUserManagementServiceImpl(
         }
     }
 
+    // Delete User with User ID
     override suspend fun deleteUser(userId: String): ResponseEntity<Any> {
         return runBlocking {
             println("delete user: $userId")
@@ -102,6 +111,7 @@ class AdminUserManagementServiceImpl(
         }
     }
 
+    // Update User with User Update DTO
     override suspend fun updateUser(userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
         return runBlocking {
             val user = userRepository.updateUser(userUpdateDTO.userId, userUpdateDTO)
@@ -113,8 +123,10 @@ class AdminUserManagementServiceImpl(
         }
     }
 
+    // List all the Order of the Users by User ID
+    // Can select Page Size and create pagination with Last Order ID
     override suspend fun findOrdersByUserId(userId: String, pageSize: Int, lastOrderKey: String?): ResponseEntity<Any> {
-
+        // check if Last Order ID exist, if yes, it will be applied to the Query
         val lastEvaluatedKey = lastOrderKey?.let {
             mapOf(
                 "PK" to AttributeValue.S("USER#$userId"),
@@ -132,7 +144,7 @@ class AdminUserManagementServiceImpl(
         }
     }
 
-
+    // Update Order with Order Update DTO
     override suspend fun updateOrder(orderUpdateDto: OrderUpdateDTO): ResponseEntity<Any> {
         return runBlocking {
             val order = orderRepository.updateOrder(orderUpdateDto)

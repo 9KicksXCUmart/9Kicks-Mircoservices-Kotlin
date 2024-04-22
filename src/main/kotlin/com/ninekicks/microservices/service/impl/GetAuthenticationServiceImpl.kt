@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class GetAuthenticationServiceImpl : GetAuthenticationService {
+
+    // Get User ID from Security Context
     override fun getUserId(): String {
         val userId = (SecurityContextHolder.getContext().authentication.principal as User).userId
         return userId.replace("USER#", "")

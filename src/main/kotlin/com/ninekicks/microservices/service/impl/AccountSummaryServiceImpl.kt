@@ -6,7 +6,6 @@ import com.ninekicks.microservices.model.Order
 import com.ninekicks.microservices.model.dto.OrderDetailDTO
 import com.ninekicks.microservices.model.dto.UserUpdateDTO
 import com.ninekicks.microservices.repository.impl.OrderRepositoryImpl
-import com.ninekicks.microservices.repository.impl.ProductRepositoryImpl
 import com.ninekicks.microservices.repository.impl.UserRepositoryImpl
 import com.ninekicks.microservices.service.AccountSummaryService
 import kotlinx.coroutines.runBlocking
@@ -19,8 +18,9 @@ class AccountSummaryServiceImpl(
     private val orderRepository: OrderRepositoryImpl,
 ) : AccountSummaryService {
     private val responseHandler = ResponseHandler()
-    override fun displayUserDetails(userId: String): ResponseEntity<Any> {
 
+    // Get User Details by User ID
+    override fun displayUserDetails(userId: String): ResponseEntity<Any> {
         return runBlocking {
             val user = userRepository.getUser(userId)
             responseHandler.validateResponse(
@@ -31,12 +31,15 @@ class AccountSummaryServiceImpl(
         }
     }
 
+    // List all the Orders of a particular User with User ID
+    // Can select Page Size and create pagination with Last Order ID
     override fun listOrdersByUserId(
         userId: String,
         pageSize: Int,
         lastOrderKey: String?
     ): ResponseEntity<Any> {
         return runBlocking {
+            // check if Last Order ID exist, if yes, it will be applied to the Query
             val lastEvaluatedKey = lastOrderKey?.let {
                 mapOf(
                     "PK" to AttributeValue.S("USER#$userId"),
@@ -67,8 +70,8 @@ class AccountSummaryServiceImpl(
         }
     }
 
+    // Display All Order Details by User ID and Order ID
     override fun displayOrderDetails(userId: String, orderId: String): ResponseEntity<Any> {
-
         return runBlocking {
             val order = orderRepository.getOrder(userId, orderId)
             val orderDetail = OrderDetailDTO(
@@ -92,6 +95,7 @@ class AccountSummaryServiceImpl(
         }
     }
 
+    // Update User Details by passing in User ID and the corresponding User Update DTO
     override fun updateUserDetails(userId: String, userUpdateDTO: UserUpdateDTO): ResponseEntity<Any> {
         return runBlocking {
             val user = userRepository.updateUser(userId, userUpdateDTO)

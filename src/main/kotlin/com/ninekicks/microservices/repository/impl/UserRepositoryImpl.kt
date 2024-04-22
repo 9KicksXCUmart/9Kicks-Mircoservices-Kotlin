@@ -28,10 +28,9 @@ class UserRepositoryImpl(
 
     private val creditCardConverter = CreditCardConverter()
     private val shippingAddressConverter = ShippingAddressConverter()
-    private val attrToIntConverter = AttrToIntConverter()
     private val shoppingCartItemConverter = ShoppingCartItemConverter()
 
-
+    // Set the Partition Key and Sort Key for Query in DynamoDB
     private val keyToGet = mutableMapOf<String, AttributeValue>(
         "PK" to AttributeValue.S("USER#"),
         "SK" to AttributeValue.S("USER_PROFILE")
@@ -47,6 +46,8 @@ class UserRepositoryImpl(
         try {
             val returnedItem = dynamoDbClient.getItem(itemRequest)
             val itemMap: Map<String, AttributeValue> = returnedItem.item!!
+
+            // Retrieve and map received item from DynamoDB
             return User(
                 userId = itemMap["PK"]!!.asS(),
                 email = itemMap["email"]!!.asS(),
@@ -67,10 +68,10 @@ class UserRepositoryImpl(
 
     override suspend fun getUserByEmail(email: String): User? {
 
+        // Create Query with User-email-index GSI to use Email Address to find Users
         val queryRequest = QueryRequest {
             this.tableName = dynamoDbtableName
             this.indexName = "User-email-index"
-//            this.indexName = "email-PK-index"
             this.keyConditionExpression = "email = :email"
             this.expressionAttributeValues = mapOf(":email" to AttributeValue.S(email))
         }
@@ -78,7 +79,7 @@ class UserRepositoryImpl(
         try {
             val queryResult = dynamoDbClient.query(queryRequest)
             val itemMap = queryResult.items!![0]
-
+            // Retrieve and map received item from DynamoDB
             return User(
                 userId = itemMap["PK"]!!.asS(),
                 email = itemMap["email"]!!.asS(),
@@ -102,7 +103,8 @@ class UserRepositoryImpl(
         lastKey: Map<String, AttributeValue>?
     ): List<User> {
         val queryResponses = mutableListOf<QueryResponse>()
-
+        // Create Query with SK-PK-index GSI to match "USER_PROFILE" in Sort Key to find Users
+        // Allow to set Page Size and Last User ID for pagination
         val queryRequest = QueryRequest {
             this.tableName = dynamoDbtableName
             this.indexName = "SK-PK-index"
@@ -131,6 +133,7 @@ class UserRepositoryImpl(
 
     override suspend fun addUser(userUpdateDto: UserUpdateDTO): User? {
         val userId = UUID.randomUUID().toString()
+        // Map data model to fit DynamoDB Attribute Values
         val itemValues = mapOf(
             "PK" to AttributeValue.S("USER#$userId"),
             "SK" to AttributeValue.S("USER_PROFILE"),
@@ -154,9 +157,9 @@ class UserRepositoryImpl(
 
     override suspend fun updateUser(userId: String, userUpdateDto: UserUpdateDTO): User? {
         keyToGet["PK"] = AttributeValue.S("USER#${userId}")
-//        keyToGet["PK"] = AttributeValue.S("USER#120499e3-fdfd-440c-1204-bdcd954f4891")
 
         val shippingAddressConverter = ShippingAddressConverter()
+        // Map data model to fit DynamoDB Attribute Values
         val attributeUpdates = mapOf(
             "email" to userUpdateDto.email?.let { AttributeValue.S(it) },
             "password" to userUpdateDto.password?.let { AttributeValue.S(it) },
@@ -181,7 +184,7 @@ class UserRepositoryImpl(
 
     override suspend fun deleteUser(userId: String): Boolean {
         keyToGet["PK"] = AttributeValue.S("USER#$userId")
-
+        // Set User ID to Delete Item Request
         val deleteItemRequest = DeleteItemRequest {
             tableName = dynamoDbtableName
             key = keyToGet

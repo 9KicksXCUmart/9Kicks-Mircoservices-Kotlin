@@ -11,6 +11,8 @@ import java.time.Instant
 
 @Component
 class LoggingFilter : Filter {
+
+    // Create logging format for incoming API request in console
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
         val httpRequest = request as HttpServletRequest
         val httpResponse = response as HttpServletResponse
