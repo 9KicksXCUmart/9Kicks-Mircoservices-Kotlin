@@ -1,6 +1,6 @@
-# 9Kicks Mircoservices Kotlin
+# 9Kicks Microservices Kotlin
 
-This is one of the microservice for the 9Kicks project. It is written in Kotlin and uses the Spring Boot framework.
+This is one of the microservices for the 9Kicks project. It is written in Kotlin and uses the Spring Boot framework.
 
 Implemented features:
 
@@ -20,14 +20,14 @@ Implemented features:
 - AWS account
 - AWS DynamoDB
 - Stripe
-- Running Mircoservices Go (Backend) locally or remotely
+- Running Microservices Go (Backend) locally or remotely
 
 ## 1. Getting Started
 
 ### 1.1 Local AWS Environment
 Install AWS CLI and use `aws configure` command to configure your aws.
 
- Below are the setting for this project:
+ Below are the settings for this project:
 ```
 AWS Access Key ID: <YOUR-ACCESS-KEY>
 AWS Secret Access Key: <YOUR-SECRET-ACCESS-KEY>
@@ -41,10 +41,10 @@ You can add the following environment variable in IntelliJ.
 ```
 AWS_ACCESS_KEY_ID=<YOUR-ACCESS-KEY>;
 AWS_SECRET_ACCESS_KEY=<YOUR-SECRET-ACCESS-KEY>;
-AWS_DYNAMODB_TABLE_NAME=9Kicks;
-CORS_ORIGINS=http://localhost:5173;
+AWS_DYNAMODB_TABLE_NAME=<DYNAMODB-TABLE-NAME>;
+CORS_ORIGINS=<FRONTEND-URL-HOST>;
 STRIPE_KEY=<YOUR-STRIPE-KEY>;
-GO_BACKEND_URL=http://localhost:9000
+GO_BACKEND_URL=<BACKEND-GO-URL-HOST>
 ```
 
 ### 1.3. Alternate Env Variable with `.env`
@@ -61,8 +61,8 @@ Input your credentials in the `.env` file.
 AWS_ACCESS_KEY_ID=<YOUR-ACCESS-KEY>
 AWS_SECRET_ACCESS_KEY=<YOUR-SECRET-ACCESS-KEY>
 AWS_DYNAMODB_TABLE_NAME=<DYNAMODB-TABLE-NAME>
-CORS_ORIGINS=<FRONTEND-URL-HOST>;
-STRIPE_KEY=<YOUR-STRIPE-KEY>;
+CORS_ORIGINS=<FRONTEND-URL-HOST>
+STRIPE_KEY=<YOUR-STRIPE-KEY>
 GO_BACKEND_URL=<BACKEND-GO-URL-HOST>
 ```
 
