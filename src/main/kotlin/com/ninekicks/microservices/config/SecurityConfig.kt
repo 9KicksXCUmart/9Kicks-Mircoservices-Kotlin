@@ -11,6 +11,9 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
+// A class for handling all the filters of outgoing APIs
+// Including allowing request from authorized users
+// and blocking request from unauthorized users
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
@@ -27,16 +30,17 @@ class SecurityConfig(
             sessionManagement {
                 sessionCreationPolicy = SessionCreationPolicy.STATELESS
             }
+            // managing permission incoming request
             authorizeRequests {
                 // comment out below line for deployment
 //                authorize("**", permitAll)
 
                 //comment out below lines for development
-                authorize("/api/v1/product-browsing**", permitAll)
-                authorize("/api/v1/**", authenticated)
+                authorize("/api/v1/product-browsing**", permitAll)  // user does not require to log in to perform product browsing
+                authorize("/api/v1/**", authenticated)              // other APIs require logging in
             }
             addFilterBefore<UsernamePasswordAuthenticationFilter>(JwtFilter(userRepository, appConfig))
-            addFilterBefore<JwtFilter>(LoggingFilter())
+            addFilterBefore<JwtFilter>(LoggingFilter())     // apply logging filter for all outgoing requests
         }
 
         return httpSecurity.build()

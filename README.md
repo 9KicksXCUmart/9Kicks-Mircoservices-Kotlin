@@ -1,8 +1,30 @@
 # 9Kicks Mircoservices Kotlin
 
-## 1. Set Up
+This is one of the microservice for the 9Kicks project. It is written in Kotlin and uses the Spring Boot framework.
 
-### 1.1 Local Environment
+Implemented features:
+
+- [x] Security API Filter to Block Unauthorized Access
+- [x] Account Summary View
+- [x] Account Summary Update
+- [x] Order Tracking
+- [x] Order History and Management
+- [x] Stimulated Payment System with Stripe
+- [x] Shopping Cart (Add, Delete Shopping Cart Item)
+- [x] Shopping Cart Item Checkout
+- [x] Admin User Management (Create, Read, Update, Delete Users)
+
+## Prerequisites
+
+- AWS CLI
+- AWS account
+- AWS DynamoDB
+- Stripe
+- Running Mircoservices Go (Backend) locally or remotely
+
+## 1. Getting Started
+
+### 1.1 Local AWS Environment
 Install AWS CLI and use `aws configure` command to configure your aws.
 
  Below are the setting for this project:
@@ -13,8 +35,8 @@ Default region name: ap-southeast-1
 Default output format: json
 ```
 
-### 1.2. Alternate Access Key and Secret Key
-In case you want to use another pair of `Access Key` and `Secret Key`.
+### 1.2. Alternate Env Variable with IntelliJ
+In case you want to use another IntelliJ for development or use another pair of `Access Key` and `Secret Key`.
 You can add the following environment variable in IntelliJ.
 ```
 AWS_ACCESS_KEY_ID=<YOUR-ACCESS-KEY>;
@@ -23,6 +45,31 @@ AWS_DYNAMODB_TABLE_NAME=9Kicks;
 CORS_ORIGINS=http://localhost:5173;
 STRIPE_KEY=<YOUR-STRIPE-KEY>;
 GO_BACKEND_URL=http://localhost:9000
+```
+
+### 1.3. Alternate Env Variable with `.env`
+In case you want to use `.env` for development or use another pair of `Access Key` and `Secret Key`.
+You can add the following environment variable.
+
+```bash
+cp .env.example .env
+```
+
+Input your credentials in the `.env` file.
+
+```bash
+AWS_ACCESS_KEY_ID=<YOUR-ACCESS-KEY>
+AWS_SECRET_ACCESS_KEY=<YOUR-SECRET-ACCESS-KEY>
+AWS_DYNAMODB_TABLE_NAME=<DYNAMODB-TABLE-NAME>
+CORS_ORIGINS=<FRONTEND-URL-HOST>;
+STRIPE_KEY=<YOUR-STRIPE-KEY>;
+GO_BACKEND_URL=<BACKEND-GO-URL-HOST>
+```
+
+Build and Run Spring Boot:
+
+```bash
+make
 ```
 
 ## 2. Coding Standard

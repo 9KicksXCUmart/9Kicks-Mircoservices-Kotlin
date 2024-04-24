@@ -39,6 +39,9 @@ class OrderRepositoryImpl(
         pageSize: Int?,
         lastKey: Map<String, AttributeValue>?
     ): List<Order>? {
+        // Create Query to retrieve Orders with Partition Key equals to corresponding USER#<USER_ID>
+        // and Sort Key begins with ORDER#<ORDER_ID>
+        // Allow to set Page Size and Last Order ID for pagination
         val queryRequest = QueryRequest {
             this.tableName = dynamoDbtableName
             keyConditionExpression = "PK = :pk AND begins_with(SK, :sk)"
@@ -74,6 +77,7 @@ class OrderRepositoryImpl(
     }
 
     override suspend fun getOrder(userId: String, orderId: String): Order? {
+        // Set the Partition Key and Sort Key for Query in DynamoDB
         keyToGet["PK"] = AttributeValue.S("USER#$userId")
         keyToGet["SK"] = AttributeValue.S("ORDER#$orderId")
 
@@ -86,6 +90,7 @@ class OrderRepositoryImpl(
             val returnedItem = dynamoDbClient.getItem(itemRequest)
             val itemMap: Map<String, AttributeValue> = returnedItem.item!!
             println(itemMap)
+            // Retrieve and map received item from DynamoDB
             Order(
                 userId = itemMap["PK"]!!.asS(),
                 orderId = itemMap["SK"]!!.asS(),
@@ -106,14 +111,17 @@ class OrderRepositoryImpl(
     }
 
     override suspend fun updateOrder(orderUpdateDto: OrderUpdateDTO): Order? {
+        // Set the Partition Key and Sort Key for Query in DynamoDB
         keyToGet["PK"] = AttributeValue.S("USER#${orderUpdateDto.userId}")
         keyToGet["SK"] = AttributeValue.S("ORDER#${orderUpdateDto.orderId}")
 
+        // Create a map for containing Order Status and Delivery Status if the Value is not null
         val attributeUpdates = mapOf(
             "orderStatus" to orderUpdateDto.orderStatus?.let { AttributeValue.S(it.toString()) },
             "deliveryStatus" to orderUpdateDto.deliveryStatus?.let { AttributeValue.S(it.toString()) },
         ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
 
+        // Create DynamoDB Query for updating the order
         val updateExpression = "SET " + attributeUpdates.keys.joinToString(", ") { "$it = :$it" }
         val expressionAttributeValues = attributeUpdates.entries.associate { (key, value) -> ":$key" to value }
 
@@ -130,7 +138,7 @@ class OrderRepositoryImpl(
 
     override suspend fun createOrder(orderDetail: OrderCreateDTO,userId: String): Order? {
         try {
-
+        // Map data model to DynamoDB Attribute Values
         val itemValues = mapOf(
             "PK" to AttributeValue.S("USER#${userId}"),
             "SK" to AttributeValue.S("ORDER#${orderDetail.orderId}"),
