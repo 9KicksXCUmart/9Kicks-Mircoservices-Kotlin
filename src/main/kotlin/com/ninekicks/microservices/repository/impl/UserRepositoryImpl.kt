@@ -201,6 +201,7 @@ class UserRepositoryImpl(
 
     override suspend fun getShoppingCartDetail(userId: String): ShoppingCart? {
         keyToGet["PK"] = AttributeValue.S("USER#$userId")
+        // Set ShoppingCart ID as key to Get Item Request
         val itemRequest = GetItemRequest {
             key = keyToGet
             tableName = dynamoDbtableName
@@ -209,6 +210,7 @@ class UserRepositoryImpl(
             val returnedItem = dynamoDbClient.getItem(itemRequest)
             val itemMap: Map<String, AttributeValue> = returnedItem.item!!
             return ShoppingCart(
+                // Retrieve and map received shoppingCartItemDetail from DynamoDB
                 shoppingCartItemDetail = shoppingCartItemConverter.unconvert(itemMap["shoppingCartItemDetail"])!!
             )
         } catch (e: DynamoDbException) {
@@ -219,8 +221,10 @@ class UserRepositoryImpl(
 
     override suspend fun updateShoppingCartDetail(shoppingCartUpdateDTO: ShoppingCartUpdateDTO, userId: String): Boolean {
         keyToGet["PK"] = AttributeValue.S("USER#${userId}")
+        // use the getShoppingCartDetail() to get user's ShoppingCart
         var shoppingCart: ShoppingCart?= getShoppingCartDetail(userId)
         var originDetail = shoppingCart?.shoppingCartItemDetail?.toMutableMap()
+        // add new ItemDetail to ShoppingCart Object
         originDetail?.put(UUID.randomUUID().toString(), ShoppingCart.ItemDetail(
             productId = shoppingCartUpdateDTO.productId,
             price= shoppingCartUpdateDTO.price,
@@ -231,6 +235,7 @@ class UserRepositoryImpl(
             productCategory= shoppingCartUpdateDTO.productCategory,
             originalPrice= shoppingCartUpdateDTO.originalPrice
         ))
+        // Create DynamoDB Query for updating the ShoppingCart
         val attributeUpdates = mapOf( "shoppingCartItemDetail" to  shoppingCartItemConverter.convert(originDetail!!) ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
         val updateExpression = "SET " + attributeUpdates.keys.joinToString(", ") { "$it = :$it" }
         val expressionAttributeValues = attributeUpdates.entries.associate { (key, value) -> ":$key" to value }
@@ -251,10 +256,14 @@ class UserRepositoryImpl(
 
     override suspend fun deleteShoppingCartItem(userId: String, itemId: String): Boolean {
         keyToGet["PK"] = AttributeValue.S("USER#$userId")
+        // use the getShoppingCartDetail() to get user's ShoppingCart
         var shoppingCart: ShoppingCart?= getShoppingCartDetail(userId)
+        // check whether Item exist on Shopping Cart or not
         if(shoppingCart?.shoppingCartItemDetail?.get(itemId)==null||shoppingCart==null) return true
         var removeItem = shoppingCart?.shoppingCartItemDetail?.toMutableMap()
+        // remove item from ShoppingCart Object
         removeItem?.remove(itemId)
+        // Create DynamoDB Query for updating the ShoppingCart
         val attributeUpdates = mapOf( "shoppingCartItemDetail" to  shoppingCartItemConverter.convert(removeItem!!) ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
         val updateExpression = "SET " + attributeUpdates.keys.joinToString(", ") { "$it = :$it" }
         val expressionAttributeValues = attributeUpdates.entries.associate { (key, value) -> ":$key" to value }
@@ -275,7 +284,9 @@ class UserRepositoryImpl(
 
     override suspend fun clearShoppingCartItems(userId: String): Boolean {
         keyToGet["PK"] = AttributeValue.S("USER#$userId")
+        // Assign new null Map to ShoppingCart
         var clearItem:Map<String, ShoppingCart.ItemDetail> = HashMap()
+        // Create DynamoDB Query for updating the ShoppingCart
         val attributeUpdates = mapOf( "shoppingCartItemDetail" to  shoppingCartItemConverter.convert(clearItem!!) ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
         val updateExpression = "SET " + attributeUpdates.keys.joinToString(", ") { "$it = :$it" }
         val expressionAttributeValues = attributeUpdates.entries.associate { (key, value) -> ":$key" to value }

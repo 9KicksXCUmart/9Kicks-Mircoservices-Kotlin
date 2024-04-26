@@ -36,23 +36,27 @@ class PaymentServiceImpl(
     private val shoppingCartService: ShoppingCartServiceImpl,
     private val appConfig: AppConfig
 ):PaymentService{
+    // load stripe private key
     @PostConstruct
     fun init() {
         Stripe.apiKey = STRIPEPK
     }
     private val responseHandler = ResponseHandler()
-
+    // Frontend will call stripe API to post the payment information and create a confirmation token
+    // Using confirmationId to retrieve payment info from Stripe and return to Frontend for two-step confirmation
     override fun summarizePayment(confirmTokenId:String,userId: String): ResponseEntity<Any> {
         var detail:Any?=null
         var priceDetail:ProductPriceDetailDTO?=null
         var charge:Long = 0
         try{
             val confirmationToken: ConfirmationToken = ConfirmationToken.retrieve(confirmTokenId)
+            // Retrieve the payment information from ConfirmationToken Object and create detail Map Object
             detail = summarizeConfirmationToken(confirmationToken)
             priceDetail = getPriceDetail(userId)
             if(confirmationToken.paymentMethodPreview.billingDetails.address.line2=="Express Delivery")
                 priceDetail!!.actualPrice *= 100
                 charge = priceDetail!!.actualPrice.toLong()+1500
+            //build a paymentIntent session and add client_secret to detail Map Object
             val params = PaymentIntentCreateParams
                 .builder()
                 .setAmount(charge!!)
@@ -73,7 +77,7 @@ class PaymentServiceImpl(
             )
         }
      }
-
+    // Convert ConfirmationToken Object into Detail Map Object and return it
     override fun summarizeConfirmationToken(confirmationTokenDetail: ConfirmationToken): MutableMap<String, Any> {
         var orderConfirmDetail:MutableMap<String,Any> = HashMap()
         orderConfirmDetail.put("name",confirmationTokenDetail.paymentMethodPreview.billingDetails.name)
@@ -86,7 +90,7 @@ class PaymentServiceImpl(
         orderConfirmDetail.put("country","Hong Kong SAR, China")
         return orderConfirmDetail
     }
-
+    // Get total price, total discount, discount, price for Shopping Cart Items
     override fun getOrderSummary(userId: String):  ResponseEntity<Any> {
         var productPriceDetail:ProductPriceDetailDTO?=null
         try{
@@ -102,8 +106,9 @@ class PaymentServiceImpl(
             )
         }
     }
-
+    // get price detail for Order Summary
     override fun getPriceDetail(userId: String): ProductPriceDetailDTO? {
+        // Get Shopping Cart Items to retrieve the price and discount of each Shopping Cart Items
         var shoppingCartDetail:ShoppingCart?
         var totalPrice: Double = 0.0
         var actualPrice: Double = 0.0
@@ -113,6 +118,7 @@ class PaymentServiceImpl(
             runBlocking {
                 shoppingCartDetail = userRepository.getShoppingCartDetail(userId)
             }
+            // Sum the price and discount up to get the total discount and discount price
             shoppingCartDetail?.shoppingCartItemDetail?.forEach {
                 itemCount += it.value.productQuantity
                 var product:ProductDiscountPriceDTO? = productDetailService.fetchProductDiscountedPrice(it.value.productId)
@@ -136,7 +142,7 @@ class PaymentServiceImpl(
             return null
         }
     }
-
+    // Create order roecord and insert to DynamoDB
     override fun createOrderRecord(orderDetail: OrderCreateDTO,userId: String): ResponseEntity<Any> {
         return runBlocking {
             val order = orderRepository.createOrder(orderDetail,userId)
@@ -149,10 +155,11 @@ class PaymentServiceImpl(
             )
         }
     }
-
+    // After customer finish payment process, update stock count base on what customer had bought
     override fun updateStock(list:List<Order.OrderItemDetail>?): Boolean {
         return try{
             list!!.forEach {
+                // Post productId and productSize to other mirco-service to update stock quantity
                 val restTemplate = RestTemplate()
                 val headers = HttpHeaders()
                 val entity = HttpEntity<String>("", headers)

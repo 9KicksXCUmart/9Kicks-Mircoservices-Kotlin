@@ -26,7 +26,7 @@ class ProductDetailServiceImpl(
 ):ProductDetailService {
 
     private val responseHandler = ResponseHandler()
-
+    // Get product detail using productId (for testing purpose)
     override fun fetchProductDetail(productId: String): ResponseEntity<Any> {
         return runBlocking {
             val product = productRepository.getProductDetail(productId)
@@ -37,7 +37,7 @@ class ProductDetailServiceImpl(
             )
         }
     }
-
+    // GET product price info from other mirco-service
     override fun fetchProductDiscountedPrice(productId: String): ProductDiscountPriceDTO? {
         val restTemplate = RestTemplate()
         val headers = HttpHeaders()

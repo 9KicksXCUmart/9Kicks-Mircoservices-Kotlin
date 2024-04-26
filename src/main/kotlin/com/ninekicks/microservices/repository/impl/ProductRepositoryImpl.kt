@@ -28,10 +28,12 @@ class ProductRepositoryImpl(
     private val attrToIntConverter = AttrToIntConverter()
 
     override suspend fun getProductDetail(productId: String): Product? {
+        // Set the Partition Key and Sort Key for Query in DynamoDB
         val keyToGet = mutableMapOf<String, AttributeValue>(
                 "PK" to AttributeValue.S("PRODUCT#$productId"),
                 "SK" to AttributeValue.S("PRODUCT_DETAIL")
         )
+        // construct get Item request to DynamoDB
         val itemRequest = GetItemRequest {
             key = keyToGet
             tableName = dynamoDbtableName
@@ -39,6 +41,7 @@ class ProductRepositoryImpl(
         try {
             val returnedItem = dynamoDbClient.getItem(itemRequest)
             val itemMap: Map<String, AttributeValue> = returnedItem.item!!
+            // Retrieve and map received product from DynamoDB
             return Product(
                     productId = itemMap["PK"]!!.asS(),
                     productName = itemMap["productName"]!!.asS(),

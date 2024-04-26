@@ -20,7 +20,6 @@ class PaymentController(
 
     @GetMapping("/order-summary")
     fun getOrderSummary(): ResponseEntity<Any> {
-        println(authenticationService.getUserId())
         return paymentService.getOrderSummary(authenticationService.getUserId())
     }
 
